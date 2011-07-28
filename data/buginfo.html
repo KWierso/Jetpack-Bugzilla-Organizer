@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <style>
+      .newbug {
+          color: green!important;
+      }
+
+      .outdated {
+          color: red!important;   
+      }
+      .really {
+          font-weight:bolder!important;
+      }
+      .omg {
+          text-decoration:blink!important;
+      }
+      [nobugs] {
+          display:none!important;
+      }
+      
+      tr:hover {
+          background:#CCCCCC !important;
+      }
+      
+      td:nth-child(1) {
+          max-width: 100px !important;
+          width: 100px !important;
+      }
+      td:nth-child(2) {
+          max-width: 20px !important;
+          width: 20px !important;
+      }
+      td:nth-child(3) {
+          max-width: 450px !important;
+          width: 450px !important;
+      }
+      td:nth-child(4) {
+          max-width: 130px !important;
+          width: 130px !important;
+      }
+      td:nth-child(5) {
+          max-width: 150px !important;
+          width: 150px !important;
+      }
+      td:nth-child(6) {
+          max-width: 150px !important;
+          width: 150px !important;
+      }
+      td {  
+        padding:3px!important;
+      }
+      
+      td:nth-child(2),td:nth-child(4),td:nth-child(5),td:nth-child(6) {
+          text-align:center !important;
+      }
+      
+      table {
+          border-collapse:collapse;
+      }
+      table,th, td {
+          border: 1px solid black;
+      }
+      
+      #controls {
+          float:left!important;
+      }
+      #bugcounts {
+          text-align:right!important;
+          float:right!important;
+          padding-right:15px!important;
+      }
+      #wrapper {
+          width: 925px!important;
+      }
+      
+      .sorted {
+          font-weight: bold!important;
+      }
+    </style>
+    <title>YOUR BUGS</title>
+  </head>
+
+  <body>
+    <h1>Bug Dashboard</h1>
+    <div id="wrapper" nobugs="true">
+        <h2>Component: <b id="component"></b></h2>
+        <div id="controls">
+            <p>
+                Sort bugs by: | 
+                <a id="number">Bug Number</a> | 
+                <a id="priority">Priority</a> | 
+                <a id="assignee">Assignee</a> |
+            </p>
+        </div>
+        <div id="bugcounts">
+            <div>Bug count: <b id="total"></b></div>
+            <div class="newbug">New bugs: <b id="newbugs"></b></div>
+            <div class="outdated">Month-Old bugs: <span id="old"></span></div>
+            <div class="really outdated"> Two-Month-Old bugs: <span id="reallyold"></span></div>
+            <div class="omg really outdated"> Five-Month-Old bugs: <span id="omgold"></span></div>
+        </div>
+        <br style="clear:both;"/>
+        <br/>
+        <table id="newbugtable">
+          <tr>
+            <th>Bug #</th>
+            <th>Priority</th>
+            <th>Bug summary</th>
+            <th>Assignee</th>
+            <th>Creation Date</th>
+            <th>Last Modified</th>
+          </tr>
+        </table>
+        <br/>
+        <table id="oldbugtable">
+          <tr>
+            <th>Bug #</th>
+            <th>Priority</th>
+            <th>Bug summary</th>
+            <th>Assignee</th>
+            <th>Creation Date</th>
+            <th>Last Modified</th>
+          </tr>
+        </table>
+        <br/>
+        <table id="reallyoldbugtable">
+          <tr>
+            <th>Bug #</th>
+            <th>Priority</th>
+            <th>Bug summary</th>
+            <th>Assignee</th>
+            <th>Creation Date</th>
+            <th>Last Modified</th>
+          </tr>
+        </table>
+        <br/>
+        <table id="omgoldbugtable">
+          <tr>
+            <th>Bug #</th>
+            <th>Priority</th>
+            <th>Bug summary</th>
+            <th>Assignee</th>
+            <th>Creation Date</th>
+            <th>Last Modified</th>
+          </tr>
+        </table>
+        <br/>
+        <table id="bugtable">
+          <tr>
+            <th>Bug #</th>
+            <th>Priority</th>
+            <th>Bug summary</th>
+            <th>Assignee</th>
+            <th>Creation Date</th>
+            <th>Last Modified</th>
+          </tr>
+        </table>
+    </div>
+  </body>
+</html>
