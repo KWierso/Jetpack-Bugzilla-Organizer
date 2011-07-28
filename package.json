@@ -2,8 +2,8 @@
     "name": "jetpack-bugzilla-organizer", 
     "license": "MPL 1.1/GPL 2.0/LGPL 2.1", 
     "author": "Wes Kocher (:KWierso)", 
-    "version": "0.8.1", 
+    "version": "0.8.2", 
     "fullName": "Jetpack Bugzilla Organizer", 
-    "id": "jid1-sXQKGBQRmQkXRg", 
+    "id": "jid0-ABdlNbYAflJioP92KDNNhVa2Y3s", 
     "description": "Pulls a list of bugs from Bugzilla and Categorizes them"
 }
