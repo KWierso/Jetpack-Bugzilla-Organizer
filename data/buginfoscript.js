@@ -151,6 +151,26 @@ function createBugRow(bug) {
       bugrow.className = "omg really outdated";
       omgoldcount = omgoldcount + 1;
     }
+
+    // See which bugs have attachments, record their state
+    for(i in bug.attachments) {
+        let attach = bug.attachments[i];
+        if(attach.flags) {
+            if(attach.is_patch=="1" && attach.is_obsolete=="0" && attach.flags[0].name=="review") {
+                console.log(attach.flags[0].status);
+                if(attach.flags[0].status=="?") {
+                    bugrow.setAttribute("patchHasReviewQuestion", "true");
+                    console.log("QUESTION");
+                }
+                if(attach.flags[0].status=="+") {
+                    bugrow.setAttribute("patchHasReviewPlus","true");
+                }
+                if(attach.flags[0].status=="-") {
+                    bugrow.setAttribute("patchHasReviewMinus","true");
+                }
+            }
+        }
+    }
     return bugrow;
 }
 
