@@ -95,6 +95,14 @@ function createBugRow(bug) {
     bugrow.appendChild(document.createElement("td"));
     bugrow.appendChild(document.createElement("td"));
     bugrow.appendChild(document.createElement("td"));
+    bugrow.appendChild(document.createElement("td"));
+
+    bugrow.lastChild.appendChild(document.createElement("div"));
+    bugrow.lastChild.appendChild(document.createElement("div"));
+    bugrow.lastChild.appendChild(document.createElement("div"));
+    bugrow.lastChild.appendChild(document.createElement("div"));
+    bugrow.lastChild.appendChild(document.createElement("div"));
+    bugrow.lastChild.appendChild(document.createElement("div"));
     
     // Get link to the bug
     bugrow.childNodes[0].appendChild(document.createElement("a"));
@@ -107,7 +115,11 @@ function createBugRow(bug) {
     bugrow.childNodes[1].innerHTML = bug.priority;
     
     bugrow.childNodes[2].innerHTML = bug.summary;
-    bugrow.childNodes[3].innerHTML = bug.assigned_to.name;
+    if(bug.assigned_to.name == "nobody") {
+        bugrow.childNodes[3].setAttribute("assigned", "false");
+    } else {
+        bugrow.childNodes[3].innerHTML = bug.assigned_to.name;
+    }
     
     bugdate = bug.creation_time.split("T");
     bugrow.childNodes[4].innerHTML = bugdate[0];
@@ -157,10 +169,8 @@ function createBugRow(bug) {
         let attach = bug.attachments[i];
         if(attach.flags) {
             if(attach.is_patch=="1" && attach.is_obsolete=="0" && attach.flags[0].name=="review") {
-                console.log(attach.flags[0].status);
                 if(attach.flags[0].status=="?") {
                     bugrow.setAttribute("patchHasReviewQuestion", "true");
-                    console.log("QUESTION");
                 }
                 if(attach.flags[0].status=="+") {
                     bugrow.setAttribute("patchHasReviewPlus","true");
@@ -169,10 +179,23 @@ function createBugRow(bug) {
                     bugrow.setAttribute("patchHasReviewMinus","true");
                 }
             }
+            if(attach.is_patch=="1" && attach.is_obsolete=="0" && attach.flags[0].name=="feedback") {
+                if(attach.flags[0].status=="?") {
+                    bugrow.setAttribute("patchHasFeedbackQuestion", "true");
+console.log("?");
+                }
+                if(attach.flags[0].status=="+") {
+                    bugrow.setAttribute("patchHasFeedbackPlus","true");
+console.log("+");
+                }
+                if(attach.flags[0].status=="-") {
+                    bugrow.setAttribute("patchHasFeedbackMinus","true");
+console.log("-");
+                }
+            }
         }
     }
-    return bugrow;
-}
+    return bugrow;}
 
 function processBugCounts() {
     // Add the counts for each group of bugs

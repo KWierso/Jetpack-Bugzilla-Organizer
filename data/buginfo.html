@@ -22,14 +22,39 @@
           background:#CCCCCC !important;
       }
       
-      [patchHasReviewPlus="true"] {
-          font-size:250%!important;
+      [patchHasReviewPlus="true"] td:last-child div:nth-child(1) {
+          background-color: green!important;
+          width:10px!important;
+          height:10px!important;
       }
-      [patchHasReviewQuestion="true"] {
-          font-size:550%!important;
+      [patchHasReviewQuestion="true"] td:last-child div:nth-child(2) {
+          background-color: grey!important;
+          width:10px!important;
+          height:10px!important;
       }
-      [patchHasReviewMinus="true"] {
-          font-size:750%!important;
+      [patchHasReviewMinus="true"] td:last-child div:nth-child(3) {
+          background-color: red!important;
+          width:10px!important;
+          height:10px!important;
+      }
+
+      [patchHasFeedbackPlus="true"] td:last-child div:nth-child(4) {
+          background-color: green!important;
+          border-radius:50%;
+          width:10px!important;
+          height:10px!important;
+      }
+      [patchHasFeedbackQuestion="true"] td:last-child div:nth-child(5) {
+          background-color: grey!important;
+          border-radius:50%;
+          width:10px!important;
+          height:10px!important;
+      }
+      [patchHasFeedbackMinus="true"] td:last-child div:nth-child(6) {
+          background-color: red!important;
+          border-radius:50%;
+          width:10px!important;
+          height:10px!important;
       }
 
       td:nth-child(1) {
@@ -41,23 +66,27 @@
           width: 20px !important;
       }
       td:nth-child(3) {
-          max-width: 450px !important;
-          width: 450px !important;
+          max-width: 400px !important;
+          width: 400px !important;
       }
       td:nth-child(4) {
           max-width: 130px !important;
           width: 130px !important;
       }
       td:nth-child(5) {
-          max-width: 150px !important;
-          width: 150px !important;
+          max-width: 130px !important;
+          width: 130px !important;
       }
       td:nth-child(6) {
-          max-width: 150px !important;
-          width: 150px !important;
+          max-width: 130px !important;
+          width: 130px !important;
+      }
+      td:nth-child(7) {
+          max-width: 66px !important;
+          width: 66px !important;
       }
       td {  
-        padding:3px!important;
+        margin:3px!important;
       }
       
       td:nth-child(2),td:nth-child(4),td:nth-child(5),td:nth-child(6) {
@@ -70,13 +99,23 @@
       table,th, td {
           border: 1px solid black;
       }
-      
-      #controls {
-          float:left!important;
+
+      table td {
+          white-space: nowrap;
+ 	  overflow: hidden;
+ 	  text-overflow: clip;
+      }
+
+      td:nth-child(4)[assigned=false] {
+          background-color:grey!important;
+      }
+
+      #glossary {
+          float:right!important;
       }
       #bugcounts {
-          text-align:right!important;
-          float:right!important;
+          text-align:left!important;
+          float:left!important;
           padding-right:15px!important;
       }
       #wrapper {
@@ -85,6 +124,37 @@
       
       .sorted {
           font-weight: bold!important;
+      }
+
+      #glossary {
+          width:160px!important;
+      }
+      #glossary div {
+          
+      }
+      #glossary div:nth-of-type(1) {
+          border:1px black solid!important;
+          width:10px!important;
+          height:10px!important;
+          float:right!important;
+          margin-top:3px!important;
+      }
+      #glossary div:nth-of-type(2) {
+          border-radius:50px!important;
+          border:1px black solid!important;
+          width:10px!important;
+          height:10px!important;
+          float:right!important;
+          margin-top:3px!important;
+      }
+      #glossary div:nth-of-type(3) {
+          background-color: green!important;
+      }
+      #glossary div:nth-of-type(4) {
+          background-color: red!important;
+      }
+      #glossary div:nth-of-type(5) {
+          background-color: grey!important;
       }
     </style>
     <title>YOUR BUGS</title>
@@ -102,7 +172,17 @@
                 <a id="assignee">Assignee</a> |
             </p>
         </div>
+        <div id="glossary">
+            <h3><u>Patch glossary:</u></h3>
+            Patch is Review: <div></div>
+            <br/>
+            Patch is Feedback: <div></div>
+            <div>Patch has +</div>
+            <div>Patch has -</div>
+            <div>Patch has ?</div>
+        </div>
         <div id="bugcounts">
+            <h3><u>Bug Data</u></h3>
             <div>Bug count: <b id="total"></b></div>
             <div class="newbug">New bugs: <b id="newbugs"></b></div>
             <div class="outdated">Month-Old bugs: <span id="old"></span></div>
@@ -119,6 +199,7 @@
             <th>Assignee</th>
             <th>Creation Date</th>
             <th>Last Modified</th>
+            <th>Patches</th>
           </tr>
         </table>
         <br/>
@@ -130,6 +211,7 @@
             <th>Assignee</th>
             <th>Creation Date</th>
             <th>Last Modified</th>
+            <th>Patches</th>
           </tr>
         </table>
         <br/>
@@ -141,6 +223,7 @@
             <th>Assignee</th>
             <th>Creation Date</th>
             <th>Last Modified</th>
+            <th>Patches</th>
           </tr>
         </table>
         <br/>
@@ -152,6 +235,7 @@
             <th>Assignee</th>
             <th>Creation Date</th>
             <th>Last Modified</th>
+            <th>Patches</th>
           </tr>
         </table>
         <br/>
@@ -163,6 +247,7 @@
             <th>Assignee</th>
             <th>Creation Date</th>
             <th>Last Modified</th>
+            <th>Patches</th>
           </tr>
         </table>
     </div>
