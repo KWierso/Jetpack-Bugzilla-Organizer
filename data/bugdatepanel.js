@@ -1,6 +1,6 @@
 var links = document.getElementsByTagName("a");
 for(i in links) {
-  links[i].addEventListener("click", handleClick);
+  links[i].addEventListener("click", handleClick, false);
 }
 
 
