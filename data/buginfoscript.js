@@ -4,6 +4,8 @@ var epoch = d.getTime();
 
 
 // Bunch of variables we'll need
+var attachments;
+
 var bugdiv;
 var bugrow;
 var bugdate;
@@ -27,7 +29,18 @@ var reallyoldbugtable = document.getElementById("reallyoldbugtable");
 var omgoldbugtable = document.getElementById("omgoldbugtable");
 
 // Get the bugs from the add-on script
-self.port.on("bugs", function(bugs) {
+self.port.on("bugs", function(payload) {
+    var bugs = payload[0];
+    attachments = payload[1];
+
+    if(!attachments) {
+        document.getElementById("glossary").setAttribute("attachments", "no");
+        table.setAttribute("attachments", "no");
+        newbugtable.setAttribute("attachments", "no");
+        oldbugtable.setAttribute("attachments", "no");
+        reallyoldbugtable.setAttribute("attachments", "no");
+        omgoldbugtable.setAttribute("attachments", "no");
+    }
     // For every bug received, process them
     for(i in bugs) {
         // Create a new row for the bug table
@@ -38,7 +51,6 @@ self.port.on("bugs", function(bugs) {
         sortBugs(bugrow);
 
         createTables();
-        //table.appendChild(bugrow);
     }
 
     processBugCounts();
@@ -95,14 +107,15 @@ function createBugRow(bug) {
     bugrow.appendChild(document.createElement("td"));
     bugrow.appendChild(document.createElement("td"));
     bugrow.appendChild(document.createElement("td"));
-    bugrow.appendChild(document.createElement("td"));
-
-    bugrow.lastChild.appendChild(document.createElement("div"));
-    bugrow.lastChild.appendChild(document.createElement("div"));
-    bugrow.lastChild.appendChild(document.createElement("div"));
-    bugrow.lastChild.appendChild(document.createElement("div"));
-    bugrow.lastChild.appendChild(document.createElement("div"));
-    bugrow.lastChild.appendChild(document.createElement("div"));
+    if(attachments) {
+        bugrow.appendChild(document.createElement("td"));
+    	bugrow.lastChild.appendChild(document.createElement("div"));
+   		bugrow.lastChild.appendChild(document.createElement("div"));
+		bugrow.lastChild.appendChild(document.createElement("div"));
+	    bugrow.lastChild.appendChild(document.createElement("div"));
+	    bugrow.lastChild.appendChild(document.createElement("div"));
+	    bugrow.lastChild.appendChild(document.createElement("div"));
+    }
     
     // Get link to the bug
     bugrow.childNodes[0].appendChild(document.createElement("a"));
@@ -182,15 +195,12 @@ function createBugRow(bug) {
             if(attach.is_patch=="1" && attach.is_obsolete=="0" && attach.flags[0].name=="feedback") {
                 if(attach.flags[0].status=="?") {
                     bugrow.setAttribute("patchHasFeedbackQuestion", "true");
-console.log("?");
                 }
                 if(attach.flags[0].status=="+") {
                     bugrow.setAttribute("patchHasFeedbackPlus","true");
-console.log("+");
                 }
                 if(attach.flags[0].status=="-") {
                     bugrow.setAttribute("patchHasFeedbackMinus","true");
-console.log("-");
                 }
             }
         }

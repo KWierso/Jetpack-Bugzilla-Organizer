@@ -6,5 +6,6 @@ for(i in links) {
 
 function handleClick() {
   this.blur();
-  self.postMessage(this.getAttribute("data"));
+  var attachment = document.getElementById("attachment").checked;
+  self.postMessage([this.getAttribute("data"), attachment]);
 }
