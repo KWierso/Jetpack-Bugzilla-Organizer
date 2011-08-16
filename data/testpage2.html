@@ -1,7 +1,10 @@
 <html>
     <head>
         <style>
-          #bugtable[filter] tbody tr:not([hasCurrentPatch]) {
+          #bugtable[filterPatch] tbody tr:not([hasCurrentPatch]) {
+              display:none;
+          }
+          #bugtable[filterFixed] tbody tr[isfixed=true] {
               display:none;
           }
           td {
@@ -121,11 +124,20 @@
         <br/><br/>
 
         <div id="bugdiv">
-            <p class="filterparent"><input id="patchFilter" type="checkbox"/> Filter Bugs without Patches</p>
+            <div class="filterparent">
+              <p>
+                <input id="fixedFilter" type="checkbox"/>
+                Filter Fixed Bugs
+              </p>
+              <p>
+                <input id="patchFilter" type="checkbox"/>
+                Filter Bugs without Patches
+              </p>
+            </div>
             <table id="bugtable">
               <thead>
                 <tr>
-                    <th id="sortIDs">ID <img/></td>
+                    <th id="sortIDs">ID <img/></th>
                     <th id="sortMilestones">Milestone <img/></th>
                     <th id="sortSummary">Summary <img/></th>
                     <th id="sortAssignee">Assignee <img/></th>

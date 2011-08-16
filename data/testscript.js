@@ -52,8 +52,10 @@ self.port.on("bugs", function(incoming) {
             return d.assigned_to.name; 
         })
         .attr("status", function(d) { 
-            if(d.status == "RESOLVED") 
+            if(d.status == "RESOLVED" || d.status == "VERIFIED" || d.status == "CLOSED") {
                 resolved = resolved + 1;
+                this.setAttribute("isFixed", "true");
+            }
             return d.status + " " + d.resolution; 
         })
         .attr("bugcreationtime", function(d) { return d.creation_time; })
@@ -71,9 +73,9 @@ self.port.on("bugs", function(incoming) {
 
     // For each row, fill in the table cells using the attributes added earlier
     for(i in rows) {
-        //try {
+        try {
             fillRow(rows[i]);
-        //} catch(e) { console.log(i + " " + e); }
+        } catch(e) { console.log(i + " " + e); }
     }
 
     // Now that all the rows are filled in, calculate some info about the bugs
@@ -125,7 +127,7 @@ function fillRow(row) {
     fields.push(row.getAttribute("status").replace(" undefined", ""));
     fields.push(row.getAttribute("bugcreationtime").split("T")[0]);
     fields.push(row.getAttribute("bugchangetime").split("T")[0]);
-    
+
     var attachments = JSON.parse(row.getAttribute("attachments"));
     
     for(i in fields) {
@@ -354,9 +356,20 @@ document.getElementById("patchFilter")
             let tgt = e.originalTarget;
             let bugtable = document.getElementById("bugtable");
             if(tgt.checked == true) {
-                bugtable.setAttribute("filter", "true");
+                bugtable.setAttribute("filterPatch", "true");
             } else {
-                bugtable.removeAttribute("filter");
+                bugtable.removeAttribute("filterPatch");
+            }
+        }, false);
+
+document.getElementById("fixedFilter")
+        .addEventListener("click", function(e) {
+            let tgt = e.originalTarget;
+            let bugtable = document.getElementById("bugtable");
+            if(tgt.checked == true) {
+                bugtable.setAttribute("filterFixed", "true");
+            } else {
+                bugtable.removeAttribute("filterFixed");
             }
         }, false);
         
