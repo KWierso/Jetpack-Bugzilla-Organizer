@@ -1,0 +1,142 @@
+<html>
+    <head>
+        <style>
+          #bugtable[filter] tbody tr:not([hasCurrentPatch]) {
+              display:none;
+          }
+          td {
+            border: 1px solid black !important;
+          }
+          *:not(thead) > tr:hover {
+            background: grey;
+          }
+          tr[whiteboard=triage] {
+            font-style:italic;
+          }
+          tr[severity=critical] {
+            color: red;
+          }
+          tr[severity=enhancement] {
+            color: grey;
+          }
+          
+          #milestone {
+              float:left;
+          }
+          #patches {
+              float:right;
+          }
+          #bugdiv {
+              float:left;
+          }
+          
+          #milestone td, #patches td {
+              min-width: 50px;
+              text-align: center;
+          }
+          
+          th[sorted] {
+              text-decoration: underline;
+          }
+          th[sorted] img {
+              -moz-transform: scale(0.5);
+          }
+          th:not([sorted]) img {
+              display:none!important;
+          }
+          
+          th[sorted=up] img {
+              -moz-transform: scale(0.5) rotate(180deg);
+          }
+
+          .filterparent {
+              float:right;
+          }
+          #bugtable {
+              clear: both;
+          }
+        </style>
+    </head>
+    
+    <body>
+        <div id="milestone">
+            <h3>Bug statistics</h3>
+            <table>
+              <tr>
+                <td>Milestone</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Bug count</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Resolved count</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Assigned</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Unassigned</td>
+                <td></td>
+              </tr>
+            </table>
+        </div>
+        <div id="patches">
+            <h3>Patch statistics</h3>
+            <table>
+              <tr>
+                <td>Total Patches</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pending Review</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Review denied</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Review granted</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pending Feedback</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Feedback denied</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Feedback granted</td>
+                <td></td>
+              </tr>
+            </table>
+        </div>
+
+        <br/><br/>
+
+        <div id="bugdiv">
+            <p class="filterparent"><input id="patchFilter" type="checkbox"/> Filter Bugs without Patches</p>
+            <table id="bugtable">
+              <thead>
+                <tr>
+                    <th id="sortIDs">ID <img/></td>
+                    <th id="sortMilestones">Milestone <img/></th>
+                    <th id="sortSummary">Summary <img/></th>
+                    <th id="sortAssignee">Assignee <img/></th>
+                    <th id="sortStatus">Status <img/></th>
+                    <th id="sortCreated">Created <img/></th>
+                    <th id="sortModified">Modified <img/></th>
+                    <th id="sortPatches">Patches <img/></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+    </body>
+</html>
