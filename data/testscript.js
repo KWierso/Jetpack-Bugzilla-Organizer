@@ -71,9 +71,9 @@ self.port.on("bugs", function(incoming) {
 
     // For each row, fill in the table cells using the attributes added earlier
     for(i in rows) {
-        try {
+        //try {
             fillRow(rows[i]);
-        } catch(e) { console.log(i + " " + e); }
+        //} catch(e) { console.log(i + " " + e); }
     }
 
     // Now that all the rows are filled in, calculate some info about the bugs
@@ -152,39 +152,47 @@ function fillRow(row) {
                         if(!resolved) {
                             pendingReviews = pendingReviews + 1;
                         }
+                        if(!attachments[i].flags[j].requestee) {
+                            flagstring = flagstring + "r?" + " ";
+                        } else {
                             flagstring = flagstring + "r?" + attachments[i].flags[j].requestee.name + " ";
+                        }
                     }
                     if(attachments[i].flags[j].name == "feedback" && attachments[i].flags[j].status =="?") {
                         if(!resolved) {
                             pendingFeedback = pendingFeedback + 1;
                         }
+                        if(!attachments[i].flags[j].requestee) {
+                            flagstring = flagstring + "f?" + " ";
+                        } else {
                             flagstring = flagstring + "f?" + attachments[i].flags[j].requestee.name + " ";
+                        }
                     }
                     
                     if(attachments[i].flags[j].name == "review" && attachments[i].flags[j].status =="-") {
                         if(!resolved) {
                             reviewminus = reviewminus + 1;
                         }
-                            flagstring = flagstring + "r-" + " ";
+                        flagstring = flagstring + "r-" + " ";
                     }
                     if(attachments[i].flags[j].name == "feedback" && attachments[i].flags[j].status =="-") {
                         if(!resolved) {
                             feedbackminus = feedbackminus + 1;
                         }
-                            flagstring = flagstring + "f-" + " ";
+                        flagstring = flagstring + "f-" + " ";
                     }
                     
                     if(attachments[i].flags[j].name == "review" && attachments[i].flags[j].status =="+") {
                         if(!resolved) {
                             reviewplus = reviewplus + 1;
                         }
-                            flagstring = flagstring + "r+" + " ";
+                        flagstring = flagstring + "r+" + " ";
                     }
                     if(attachments[i].flags[j].name == "feedback" && attachments[i].flags[j].status =="+") {
                         if(!resolved) {
                             feedbackplus = feedbackplus + 1;
                         }
-                            flagstring = flagstring + "f+" + " ";
+                        flagstring = flagstring + "f+" + " ";
                     }
                 }
             } else {
