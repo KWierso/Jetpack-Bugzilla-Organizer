@@ -1,5 +1,6 @@
 self.postMessage("working");
 var trs;
+var breakdowntrs;
 
 // Bug stat counters
 var resolved = 0;
@@ -33,6 +34,61 @@ for(i in headers) {
         "BI%18%85%12%CC3%86%EEj%C4%5C%0BW%3C%D1S%B3%22l%CA%3E%FC%00%FBpe%E1%F1" +
         "%D4%E8%9F%00%00%00%00IEND%AEB%60%82";
 }
+
+// This is the incoming information for the bug breakdown by status and milestone
+self.port.on("breakdownFixed", function(data) {
+    // These are the rows in the breakdown table
+    var tablerows = document.getElementById("breakdownTable")
+                            .getElementsByTagName("tbody")[0]
+                            .getElementsByTagName("tr");
+    // This is the breakdown table's "thead" element
+    var head = document.getElementById("breakdownTable")
+                       .getElementsByTagName("thead")[0];
+
+    // The various datapoints used in the table
+    var counts = data.data;
+    var xHeads = data.x_labels;
+    var yHeads = data.y_labels;
+
+    // Use d3.js to add a row for each set of data
+    breakdowntrs = d3.select("#breakdownTable").select("tbody").selectAll("tr")
+            .data(counts)
+          .enter().append("tr")
+          .attr("counts", function(d) { return d; });
+
+    // Put a blank th in the table for the empty top-left spot
+    let blank = document.createElement("th");
+    head.appendChild(blank);
+
+    // Add a header element for each column in the table
+    // XXX TODO Add sorting? (It's all numbers, should be easy...)
+    for(i in xHeads) {
+      let header = document.createElement("th");
+      header.innerHTML = xHeads[i];
+      header.setAttribute("index", head.childNodes.length);
+      //console.log(header.getAttribute("index") + " " + header.innerHTML);
+      head.appendChild(header); 
+    }
+
+    // For every row added to the table, parse out the data and add a table cell for it
+    for(i in tablerows) {
+      // Get this row's data
+      let thisRowData = JSON.parse("[" + tablerows[i].getAttribute("counts") + "]");
+
+      // Add the first column from the yHeads dataset
+      let yHeader = document.createElement("td");
+      yHeader.innerHTML = yHeads[i];
+      yHeader.className = "first";
+      tablerows[i].appendChild(yHeader);
+
+      // For every item in the data set, create a row for the item
+      for(j in thisRowData) {
+        let cell = document.createElement("td");
+        cell.innerHTML = thisRowData[j];
+        tablerows[i].appendChild(cell);
+      }
+    }
+});
 
 // These are the incoming bugs from the main addon script
 self.port.on("bugs", function(incoming) {
@@ -103,14 +159,9 @@ self.port.on("bugs", function(incoming) {
     patchrows[6].lastElementChild.innerHTML = feedbackplus;
 });
 
-// XXXX NOT USED
+// XXX NOT USED
 self.port.on("bugattachments", function(attachments) {
     console.log(attachments);
-});
-
-// XXXX NOT USED
-self.port.on("product", function(data) {
-    
 });
 
 // Fill in a single row, given its attributes
@@ -119,6 +170,7 @@ function fillRow(row) {
         row.setAttribute("whiteboard", "triage");
     }
 
+    // All of this row's data
     var fields = [];
     fields.push(row.getAttribute("bugid"));
     fields.push(row.getAttribute("milestone"));
@@ -134,7 +186,7 @@ function fillRow(row) {
         var cell = document.createElement("td");
         if(i==0) {
             cell.innerHTML = "<a href='https://bugzilla.mozilla.org/show_bug.cgi?id=" +
-                fields[i] + "'>Bug " + fields[i] + "</a>";
+                fields[i] + "'>" + fields[i] + "</a>";
         } else {
             cell.innerHTML = fields[i];
         }
@@ -206,7 +258,6 @@ function fillRow(row) {
         }
     }
     if(row.getAttribute("hasCurrentPatch") == "true") {
-        //console.log(flagstring);
         var cell = document.createElement("td");
         cell.innerHTML = flagstring;
         row.appendChild(cell);

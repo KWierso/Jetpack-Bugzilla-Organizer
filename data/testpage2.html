@@ -7,6 +7,39 @@
           #bugtable[filterFixed] tbody tr[isfixed=true] {
               display:none;
           }
+
+          #bugtable td:nth-child(1) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(2) {
+              width:150px !important;
+              max-width:150px !important;
+          }
+          #bugtable td:nth-child(3) {
+              width:300px !important;
+              max-width:300px !important;
+          }
+          #bugtable td:nth-child(4) {
+              width:200px !important;
+              max-width:200px !important;
+          }
+          #bugtable td:nth-child(5) {
+              width:200px !important;
+              max-width:200px !important;
+          }
+          #bugtable td:nth-child(6) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(7) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(8) {
+              max-width:300px !important;
+          }
+
           td {
             border: 1px solid black !important;
           }
@@ -22,17 +55,33 @@
           tr[severity=enhancement] {
             color: grey;
           }
-          
+          body > div {
+              margin: 10px !important;
+          }
           #milestone {
               float:left;
+              border:1px solid black;
           }
           #patches {
               float:right;
+              border:1px solid black;
           }
           #bugdiv {
+              clear:both;
               float:left;
+              border:1px solid black;
           }
-          
+          #breakdown {
+              float:left;
+              border:1px solid black;
+          }
+          #breakdown td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
+            font-weight:bold;
+            border:1px dashed!important;
+          }
+          #breakdown th {
+            border:1px dashed!important;
+          }
           #milestone td, #patches td {
               min-width: 50px;
               text-align: center;
@@ -121,7 +170,15 @@
             </table>
         </div>
 
-        <br/><br/>
+        <div id="breakdown">
+            <h3>Bug Breakdown</h3>
+            <table id="breakdownTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+        </div>
+
+        <br style="clear:both;"/><br/>
 
         <div id="bugdiv">
             <div class="filterparent">
