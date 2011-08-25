@@ -117,6 +117,7 @@ self.port.on("bugs", function(incoming) {
         .attr("bugcreationtime", function(d) { return d.creation_time; })
         .attr("bugchangetime", function(d) { return d.last_change_time; })
         .attr("severity", function(d) { return d.severity; })
+        .attr("component", function(d) { return d.component; })
         .attr("attachments", function(d) { 
             return JSON.stringify(d.attachments); 
         })
@@ -166,8 +167,10 @@ self.port.on("bugattachments", function(attachments) {
 
 // Fill in a single row, given its attributes
 function fillRow(row) {
-    if(row.getAttribute("whiteboard") == "[triage:followup]") {
-        row.setAttribute("whiteboard", "triage");
+    if(row.getAttribute("whiteboard")) {
+      if(row.getAttribute("whiteboard").match("[triage:followup]") == "[triage:followup]") {
+          row.setAttribute("triage", "yes");
+      }
     }
 
     // All of this row's data
@@ -423,7 +426,24 @@ document.getElementById("fixedFilter")
                 bugtable.removeAttribute("filterFixed");
             }
         }, false);
-        
+
+document.getElementById("componentFilter")
+        .addEventListener("change", function(e) {
+            let tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).innerHTML;
+            let bugtable = document.getElementById("bugtable");
+            bugtable.setAttribute("filterComponent", tgt);
+        }, false);
+
+document.getElementById("invertFilter")
+        .addEventListener("click", function(e) {
+            let tgt = e.originalTarget;
+            let bugtable = document.getElementById("bugtable");
+            if(tgt.checked == true) {
+                bugtable.setAttribute("invert", "true");
+            } else {
+                bugtable.removeAttribute("invert");
+            }
+        }, false);
 /* //XXX NOT USED (But maybe useful later?)
 document.getElementById("getAttachments")
         .addEventListener("click", function(e) {

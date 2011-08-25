@@ -1,10 +1,31 @@
 <html>
     <head>
         <style>
-          #bugtable[filterPatch] tbody tr:not([hasCurrentPatch]) {
+          #bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
               display:none;
           }
-          #bugtable[filterFixed] tbody tr[isfixed=true] {
+          #bugtable:not([invert])[filterFixed] tbody tr[isfixed=true] {
+              display:none;
+          }
+
+          #bugtable:not([invert])[filterComponent=General] tbody tr:not([component=General]) {
+              display:none;
+          }
+          #bugtable:not([invert])[filterComponent=Documentation] tbody tr:not([component=Documentation]) {
+              display:none;
+          }
+          
+          #bugtable[invert][filterPatch] tbody tr[hasCurrentPatch] {
+              display:none;
+          }
+          #bugtable[invert][filterFixed] tbody tr:not([isfixed=true]) {
+              display:none;
+          }
+
+          #bugtable[invert][filterComponent=General] tbody tr[component=General] {
+              display:none;
+          }
+          #bugtable[invert][filterComponent=Documentation] tbody tr[component=Documentation] {
               display:none;
           }
 
@@ -46,7 +67,7 @@
           *:not(thead) > tr:hover {
             background: grey;
           }
-          tr[whiteboard=triage] {
+          tr[triage=yes] {
             font-style:italic;
           }
           tr[severity=critical] {
@@ -54,6 +75,9 @@
           }
           tr[severity=enhancement] {
             color: grey;
+          }
+          tr[severity=enhancement]:hover {
+            color: black;
           }
           body > div {
               margin: 10px !important;
@@ -184,11 +208,23 @@
             <div class="filterparent">
               <p>
                 <input id="fixedFilter" type="checkbox"/>
-                Filter Fixed Bugs
+                <label>Filter Fixed Bugs</label>
               </p>
               <p>
                 <input id="patchFilter" type="checkbox"/>
-                Filter Bugs without Patches
+                <label>Filter Bugs without Patches</label>
+              </p>
+              <p>
+                <select id="componentFilter">
+                  <option value="All">All</option>
+                  <option value="General">General</option>
+                  <option value="Documentation">Documentation</option>
+                </select>
+                <label>Filter by Component</label>
+              </p>
+              <p>
+                <input id="invertFilter" type="checkbox"/>
+                <label>Invert Filters</label>
               </p>
             </div>
             <table id="bugtable">
