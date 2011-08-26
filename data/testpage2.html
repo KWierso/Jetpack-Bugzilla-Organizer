@@ -1,6 +1,15 @@
 <html>
     <head>
         <style>
+          div.filterparent > p {
+              float:left;
+              padding: 5px;
+              margin: 7px;
+          }
+          div.filterparent > p:not(:last-child) {
+              border:1px dashed #000000;
+          }
+
           #bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
               display:none;
           }
@@ -125,9 +134,6 @@
               -moz-transform: scale(0.5) rotate(180deg);
           }
 
-          .filterparent {
-              float:right;
-          }
           #bugtable {
               clear: both;
           }
@@ -225,6 +231,9 @@
               <p>
                 <input id="invertFilter" type="checkbox"/>
                 <label>Invert Filters</label>
+              </p>
+              <p>
+                <input id="resetFilter" type="button" value="Reset Filters"/>
               </p>
             </div>
             <table id="bugtable">
