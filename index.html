@@ -1,77 +1,262 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <meta charset='utf-8'>
+    <head>
+        <style>
+          div.filterparent > p {
+              float:left;
+              padding: 5px;
+              margin: 7px;
+          }
+          div.filterparent > p:not(:last-child) {
+              border:1px dashed #000000;
+          }
 
-  <title>KWierso/Jetpack-Bugzilla-Organizer @ GitHub</title>
+          #bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
+              display:none;
+          }
+          #bugtable:not([invert])[filterFixed] tbody tr[isfixed=true] {
+              display:none;
+          }
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #49bc24;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #b643db; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #b643db; }
-    h3 { text-align: center; color: #b643db; }
-    a { color: #b643db; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+          #bugtable:not([invert])[filterComponent=General] tbody tr:not([component=General]) {
+              display:none;
+          }
+          #bugtable:not([invert])[filterComponent=Documentation] tbody tr:not([component=Documentation]) {
+              display:none;
+          }
+          
+          #bugtable[invert][filterPatch] tbody tr[hasCurrentPatch] {
+              display:none;
+          }
+          #bugtable[invert][filterFixed] tbody tr:not([isfixed=true]) {
+              display:none;
+          }
 
-<body>
-  <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+          #bugtable[invert][filterComponent=General] tbody tr[component=General] {
+              display:none;
+          }
+          #bugtable[invert][filterComponent=Documentation] tbody tr[component=Documentation] {
+              display:none;
+          }
 
-  <div id="container">
+          #bugtable td:nth-child(1) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(2) {
+              width:150px !important;
+              max-width:150px !important;
+          }
+          #bugtable td:nth-child(3) {
+              width:300px !important;
+              max-width:300px !important;
+          }
+          #bugtable td:nth-child(4) {
+              width:200px !important;
+              max-width:200px !important;
+          }
+          #bugtable td:nth-child(5) {
+              width:200px !important;
+              max-width:200px !important;
+          }
+          #bugtable td:nth-child(6) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(7) {
+              width:100px !important;
+              max-width:100px !important;
+          }
+          #bugtable td:nth-child(8) {
+              max-width:300px !important;
+          }
 
-    <div class="download">
-      <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
+          td {
+            border: 1px solid black !important;
+          }
+          *:not(thead) > tr:hover {
+            background: grey;
+          }
+          tr[triage=yes] {
+            font-style:italic;
+          }
+          tr[severity=critical] {
+            color: red;
+          }
+          tr[severity=enhancement] {
+            color: grey;
+          }
+          tr[severity=enhancement]:hover {
+            color: black;
+          }
+          body > div {
+              margin: 10px !important;
+          }
+          #milestone {
+              float:left;
+              border:1px solid black;
+          }
+          #patches {
+              float:right;
+              border:1px solid black;
+          }
+          #bugdiv {
+              clear:both;
+              float:left;
+              border:1px solid black;
+          }
+          #breakdown {
+              float: left;
+              border:1px solid black;
+          }
+          #breakdown td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
+            font-weight:bold;
+            border:1px dashed!important;
+          }
+          #breakdown th {
+            border:1px dashed!important;
+          }
+          #breakdown table {
+            float:left;
+          }
+          #pie {
+            float:right;
+          }
+          #milestone td, #patches td {
+              min-width: 50px;
+              text-align: center;
+          }
+          
+          th[sorted] {
+              text-decoration: underline;
+          }
+          th[sorted] img {
+              -moz-transform: scale(0.5);
+          }
+          th:not([sorted]) img {
+              display:none!important;
+          }
+          
+          th[sorted=up] img {
+              -moz-transform: scale(0.5) rotate(180deg);
+          }
 
-    <h1><a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer">Jetpack-Bugzilla-Organizer</a>
-      <span class="small">by <a href="http://github.com/KWierso">KWierso</a></span></h1>
+          #bugtable {
+              clear: both;
+          }
+        </style>
+    </head>
+    
+    <body>
+        <div id="milestone">
+            <h3>Bug statistics</h3>
+            <table>
+              <tr>
+                <td>Milestone</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Bug count</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Resolved count</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Assigned</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Unassigned</td>
+                <td></td>
+              </tr>
+            </table>
+        </div>
+        <div id="patches">
+            <h3>Patch statistics</h3>
+            <table>
+              <tr>
+                <td>Total Patches</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pending Review</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Review denied</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Review granted</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Pending Feedback</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Feedback denied</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Feedback granted</td>
+                <td></td>
+              </tr>
+            </table>
+        </div>
 
-    <div class="description">
-      Get good information out of the Bug Tracker for Jetpack
-    </div>
+        <br style="clear:both;"/><br/>
 
-    <h2>Authors</h2>
-<p>KWierso (kwierso@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p> (kwierso@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer/zipball/master">zip</a> or
-      <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/KWierso/Jetpack-Bugzilla-Organizer</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/KWierso/Jetpack-Bugzilla-Organizer">KWierso/Jetpack-Bugzilla-Organizer</a>
-    </div>
-
-  </div>
-
-  
-</body>
+        <div id="bugdiv">
+            <div class="filterparent">
+              <p>
+                <input id="fixedFilter" type="checkbox"/>
+                <label>Filter Fixed Bugs</label>
+              </p>
+              <p>
+                <input id="patchFilter" type="checkbox"/>
+                <label>Filter Bugs without Patches</label>
+              </p>
+              <p>
+                <select id="componentFilter">
+                  <option value="All">All</option>
+                  <option value="General">General</option>
+                  <option value="Documentation">Documentation</option>
+                </select>
+                <label>Filter by Component</label>
+              </p>
+              <p>
+                <input id="invertFilter" type="checkbox"/>
+                <label>Invert Filters</label>
+              </p>
+              <p>
+                <input id="resetFilter" type="button" value="Reset Filters"/>
+              </p>
+            </div>
+            <table id="bugtable">
+              <thead>
+                <tr>
+                    <th id="sortIDs">ID <img/></th>
+                    <th id="sortMilestones">Milestone <img/></th>
+                    <th id="sortSummary">Summary <img/></th>
+                    <th id="sortAssignee">Assignee <img/></th>
+                    <th id="sortStatus">Status <img/></th>
+                    <th id="sortCreated">Created <img/></th>
+                    <th id="sortModified">Modified <img/></th>
+                    <th id="sortPatches">Patches <img/></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+        
+        <div id="breakdown">
+            <h3>Bug Breakdown</h3>
+            <table id="breakdownTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+        </div>
+    </body>
 </html>
