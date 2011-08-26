@@ -444,6 +444,26 @@ document.getElementById("invertFilter")
                 bugtable.removeAttribute("invert");
             }
         }, false);
+
+document.getElementById("resetFilter")
+        .addEventListener("click", function(e) {
+            let inputs = document.getElementById("bugdiv")
+                                 .getElementsByTagName("input");
+
+            for(i in inputs) {
+              if(inputs[i].type == "checkbox") {
+                inputs[i].checked = false;
+              }
+            }
+            document.getElementById("componentFilter").selectedIndex = 0;
+            
+            let bugtable = document.getElementById("bugtable");
+            bugtable.removeAttribute("filterPatch");
+            bugtable.removeAttribute("filterFixed");
+            bugtable.removeAttribute("filterComponent");
+            bugtable.removeAttribute("invert");
+        },false);
+
 /* //XXX NOT USED (But maybe useful later?)
 document.getElementById("getAttachments")
         .addEventListener("click", function(e) {
