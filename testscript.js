@@ -1,4 +1,4 @@
-self.postMessage("working");
+//self.postMessage("working");
 var trs;
 var breakdowntrs;
 
@@ -19,8 +19,8 @@ var feedbackplus = 0;
 // Add the sorting arrow image to each header
 var headers = document.getElementById("bugtable")
                       .getElementsByTagName("th");
-                      
-for(i in headers) {
+
+for(i=0;i<headers.length;i++) {
     headers[i].getElementsByTagName("img")[0].src = "data:image/png,%89PNG%0D%" +
         "0A%1A%0A%00%00%00%0DIHDR%00%00%00%10%00%00%00%0E%08%06%00%00%00%26%2F" +
         "%9C%8A%00%00%00%01sRGB%00%AE%CE%1C%E9%00%00%00%06bKGD%00%FF%00%FF%00%" +
@@ -35,8 +35,54 @@ for(i in headers) {
         "%D4%E8%9F%00%00%00%00IEND%AEB%60%82";
 }
 
+getbreakdown();
+
+// initiate xhr to get breakdown data, pass it to d3.js
+function getbreakdown() {
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=status";
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+  //for(i in request.response) {
+    if (request.readyState == 4) {
+       if(request.status == 200) {
+         breakdownFixed(JSON.parse(request.response));
+       } else {
+         alert(request.status);
+       }
+    }
+  };
+  request.send(null);
+}
+
+getBugs();
+
+function getBugs() {
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/" +
+    "bug?product=Add-on%20SDK&resolution=---&include_fields=" +
+    "id,summary,assigned_to,creation_time,last_change_time," +
+    "resolution,status,target_milestone,whiteboard,severity,attachments,component";
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+       if(request.status == 200) {
+         bugs(JSON.parse(request.response));
+       } else {
+         alert(request.status);
+       }
+    }
+  };
+  request.send(null);
+}
+
 // This is the incoming information for the bug breakdown by status and milestone
-self.port.on("breakdownFixed", function(data) {
+//self.port.on("breakdownFixed", function(data) {
+function breakdownFixed(data) {
     // These are the rows in the breakdown table
     var tablerows = document.getElementById("breakdownTable")
                             .getElementsByTagName("tbody")[0]
@@ -59,46 +105,46 @@ self.port.on("breakdownFixed", function(data) {
           .attr("counts", function(d) { return d; });
 
     // Put a blank th in the table for the empty top-left spot
-    let blank = document.createElement("th");
+    var blank = document.createElement("th");
     head.appendChild(blank);
 
     // Add a header element for each column in the table
     // XXX TODO Add sorting? (It's all numbers, should be easy...)
     for(i in xHeads) {
-      let header = document.createElement("th");
+      var header = document.createElement("th");
       header.innerHTML = xHeads[i];
       header.setAttribute("index", head.childNodes.length);
       head.appendChild(header);
     }
 
     // For every row added to the table, parse out the data and add a table cell for it
-    for(i in tablerows) {
+    for(var i=0;i<tablerows.length;i++) {
       // Get this row's data
-      let thisRowData = JSON.parse("[" + tablerows[i].getAttribute("counts") + "]");
+      var thisRowData = JSON.parse("[" + tablerows[i].getAttribute("counts") + "]");
 
       // Add the first column from the yHeads dataset
-      let yHeader = document.createElement("td");
+      var yHeader = document.createElement("td");
       yHeader.innerHTML = yHeads[i];
       yHeader.className = "first";
       tablerows[i].appendChild(yHeader);
 
       // For every item in the data set, create a row for the item
       for(j in thisRowData) {
-        let cell = document.createElement("td");
+        var cell = document.createElement("td");
         cell.innerHTML = thisRowData[j];
         tablerows[i].appendChild(cell);
       }
     }
 
     // Draw a pie chart of the milestone breakdown, sum all milestones if all are shown
-    let milestone = [];
+    var milestone = [];
     if(typeof counts[0] == "number") {
       for(i in counts) {
         milestone.push(counts[i])
       }
     } else {
       for(i in counts) {
-        let thisSum = 0;
+        var thisSum = 0;
         for(j in counts[i]) {
           thisSum = thisSum + counts[i][j];
         }
@@ -106,10 +152,11 @@ self.port.on("breakdownFixed", function(data) {
       }
     }
     pie(milestone);
-});
+}
 
 // These are the incoming bugs from the main addon script
-self.port.on("bugs", function(incoming) {
+//self.port.on("bugs", function(incoming) {
+function bugs(incoming) {
     var bugs = incoming["bugs"];
 
     // Use d3.js to add a row for each bug automagically, assigning attributes
@@ -147,7 +194,7 @@ self.port.on("bugs", function(incoming) {
                        .getElementsByTagName("tr");
 
     // For each row, fill in the table cells using the attributes added earlier
-    for(i in rows) {
+    for(var i=0;i<rows.length;i++) {
         try {
             fillRow(rows[i]);
         } catch(e) { console.log(i + " " + e); }
@@ -176,12 +223,12 @@ self.port.on("bugs", function(incoming) {
     patchrows[4].lastElementChild.innerHTML = pendingFeedback;
     patchrows[5].lastElementChild.innerHTML = feedbackminus;
     patchrows[6].lastElementChild.innerHTML = feedbackplus;
-});
+}
 
 // XXX NOT USED
-self.port.on("bugattachments", function(attachments) {
-    console.log(attachments);
-});
+//self.port.on("bugattachments", function(attachments) {
+//    console.log(attachments);
+//});
 
 // Fill in a single row, given its attributes
 function fillRow(row) {
@@ -215,9 +262,9 @@ function fillRow(row) {
     }
 
     // XXX This should probably be moved to the library at some point
-    let resolved = (row.getAttribute("status").match("RESOLVED") == "RESOLVED") ||
+    var resolved = (row.getAttribute("status").match("RESOLVED") == "RESOLVED") ||
                    (row.getAttribute("status").match("VERIFIED") == "VERIFIED");
-    let flagstring = "";
+    var flagstring = "";
     for(i in attachments) {
         if(attachments[i].is_patch && !attachments[i].is_obsolete) {
             row.setAttribute("hasCurrentPatch", "true");
@@ -291,7 +338,7 @@ function fillRow(row) {
 // Add click event listeners on the various table headers for sorting and filtering
 document.getElementById("sortIDs")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortIDs); 
                 tgt.setAttribute("sorted", "down");
@@ -299,7 +346,7 @@ document.getElementById("sortIDs")
                 trs.sort(sortReverseIDs); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -310,7 +357,7 @@ document.getElementById("sortIDs")
         
 document.getElementById("sortMilestones")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortMilestones); 
                 tgt.setAttribute("sorted", "down");
@@ -318,7 +365,7 @@ document.getElementById("sortMilestones")
                 trs.sort(sortReverseMilestones); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -329,7 +376,7 @@ document.getElementById("sortMilestones")
         
 document.getElementById("sortSummary")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortSummary); 
                 tgt.setAttribute("sorted", "down");
@@ -337,7 +384,7 @@ document.getElementById("sortSummary")
                 trs.sort(sortReverseSummary); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -348,7 +395,7 @@ document.getElementById("sortSummary")
         
 document.getElementById("sortAssignee")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortAssignee); 
                 tgt.setAttribute("sorted", "down");
@@ -356,7 +403,7 @@ document.getElementById("sortAssignee")
                 trs.sort(sortReverseAssignee); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -367,7 +414,7 @@ document.getElementById("sortAssignee")
         
 document.getElementById("sortStatus")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortStatus); 
                 tgt.setAttribute("sorted", "down");
@@ -375,7 +422,7 @@ document.getElementById("sortStatus")
                 trs.sort(sortReverseStatus); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -387,7 +434,7 @@ document.getElementById("sortStatus")
         
 document.getElementById("sortCreated")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortIDs); 
                 tgt.setAttribute("sorted", "down");
@@ -395,7 +442,7 @@ document.getElementById("sortCreated")
                 trs.sort(sortReverseIDs); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -406,7 +453,7 @@ document.getElementById("sortCreated")
         
 document.getElementById("sortModified")
         .addEventListener("click", function(e) { 
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             if(tgt.getAttribute("sorted") == "up") {
                 trs.sort(sortModified); 
                 tgt.setAttribute("sorted", "down");
@@ -414,7 +461,7 @@ document.getElementById("sortModified")
                 trs.sort(sortReverseModified); 
                 tgt.setAttribute("sorted", "up");
             }
-            let otherHeaders = document.getElementById("bugtable")
+            var otherHeaders = document.getElementById("bugtable")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
@@ -425,8 +472,8 @@ document.getElementById("sortModified")
         
 document.getElementById("patchFilter")
         .addEventListener("click", function(e) {
-            let tgt = e.originalTarget;
-            let bugtable = document.getElementById("bugtable");
+            var tgt = e.originalTarget;
+            var bugtable = document.getElementById("bugtable");
             if(tgt.checked == true) {
                 bugtable.setAttribute("filterPatch", "true");
             } else {
@@ -436,8 +483,8 @@ document.getElementById("patchFilter")
 
 document.getElementById("fixedFilter")
         .addEventListener("click", function(e) {
-            let tgt = e.originalTarget;
-            let bugtable = document.getElementById("bugtable");
+            var tgt = e.originalTarget;
+            var bugtable = document.getElementById("bugtable");
             if(tgt.checked == true) {
                 bugtable.setAttribute("filterFixed", "true");
             } else {
@@ -447,15 +494,15 @@ document.getElementById("fixedFilter")
 
 document.getElementById("componentFilter")
         .addEventListener("change", function(e) {
-            let tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).innerHTML;
-            let bugtable = document.getElementById("bugtable");
+            var tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).innerHTML;
+            var bugtable = document.getElementById("bugtable");
             bugtable.setAttribute("filterComponent", tgt);
         }, false);
 
 document.getElementById("invertFilter")
         .addEventListener("click", function(e) {
-            let tgt = e.originalTarget;
-            let bugtable = document.getElementById("bugtable");
+            var tgt = e.originalTarget;
+            var bugtable = document.getElementById("bugtable");
             if(tgt.checked == true) {
                 bugtable.setAttribute("invert", "true");
             } else {
@@ -465,7 +512,7 @@ document.getElementById("invertFilter")
 
 document.getElementById("resetFilter")
         .addEventListener("click", function(e) {
-            let inputs = document.getElementById("bugdiv")
+            var inputs = document.getElementById("bugdiv")
                                  .getElementsByTagName("input");
 
             for(i in inputs) {
@@ -475,7 +522,7 @@ document.getElementById("resetFilter")
             }
             document.getElementById("componentFilter").selectedIndex = 0;
             
-            let bugtable = document.getElementById("bugtable");
+            var bugtable = document.getElementById("bugtable");
             bugtable.removeAttribute("filterPatch");
             bugtable.removeAttribute("filterFixed");
             bugtable.removeAttribute("filterComponent");
@@ -520,7 +567,7 @@ function pie(data) {
                             .getElementsByTagName("tbody")[0]
                             .getElementsByTagName("tr");
     var paths = document.getElementById("pie").getElementsByTagName("path");
-    for(i in tablerows) {
+    for(var i=0;i<tablerows.length;i++) {
         tablerows[i].style.background = paths[i].getAttribute("fill");
     }
 }
@@ -529,9 +576,9 @@ function pie(data) {
 document.getElementById("getAttachments")
         .addEventListener("click", function(e) {
             console.log("clickyclick!");
-            let tgt = e.originalTarget;
+            var tgt = e.originalTarget;
             tgt.innerHTML = "Fetching attachments... Please wait";
-            let rows = document.getElementById("bugtable")
+            var rows = document.getElementById("bugtable")
                                .getElementsByTagName("tbody")[0]
                                .getElementsByTagName("tr");
             for(i in rows) {

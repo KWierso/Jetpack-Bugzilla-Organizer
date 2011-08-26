@@ -12,8 +12,8 @@ function sortReverseIDs(a,b) {
 
 
 function sortMilestones(a,b) {
-    let sorta = a.target_milestone;
-    let sortb = b.target_milestone;
+    var sorta = a.target_milestone;
+    var sortb = b.target_milestone;
     
     if(a.target_milestone == "---") {
         sorta = 0;
@@ -31,8 +31,8 @@ function sortMilestones(a,b) {
 }
 
 function sortReverseMilestones(a,b) {
-    let sorta = a.target_milestone;
-    let sortb = b.target_milestone;
+    var sorta = a.target_milestone;
+    var sortb = b.target_milestone;
     
     if(a.target_milestone == "---") {
         sorta = 0;
@@ -52,9 +52,9 @@ function sortReverseMilestones(a,b) {
 
 
 function sortSummary(a,b) {
-    let sorta = a.summary.toLowerCase();
-    let sortb = b.summary.toLowerCase();
-    let sortarray = [sortb, sorta];
+    var sorta = a.summary.toLowerCase();
+    var sortb = b.summary.toLowerCase();
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -69,9 +69,9 @@ function sortSummary(a,b) {
 }
 
 function sortReverseSummary(a,b) {
-    let sorta = a.summary.toLowerCase();
-    let sortb = b.summary.toLowerCase();
-    let sortarray = [sortb, sorta];
+    var sorta = a.summary.toLowerCase();
+    var sortb = b.summary.toLowerCase();
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -88,8 +88,8 @@ function sortReverseSummary(a,b) {
 
 
 function sortAssignee(a,b) {
-    let sorta = a.assigned_to.name.toLowerCase();
-    let sortb = b.assigned_to.name.toLowerCase();
+    var sorta = a.assigned_to.name.toLowerCase();
+    var sortb = b.assigned_to.name.toLowerCase();
     
     if(sorta == "nobody") {
         sorta = "";
@@ -98,7 +98,7 @@ function sortAssignee(a,b) {
         sortb = "";
     }
     
-    let sortarray = [sortb, sorta];
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -113,8 +113,8 @@ function sortAssignee(a,b) {
 }
 
 function sortReverseAssignee(a,b) {
-    let sorta = a.assigned_to.name.toLowerCase();
-    let sortb = b.assigned_to.name.toLowerCase();
+    var sorta = a.assigned_to.name.toLowerCase();
+    var sortb = b.assigned_to.name.toLowerCase();
     
     if(sorta == "nobody") {
         sorta = "";
@@ -123,7 +123,7 @@ function sortReverseAssignee(a,b) {
         sortb = "";
     }
     
-    let sortarray = [sortb, sorta];
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -140,9 +140,9 @@ function sortReverseAssignee(a,b) {
 
 
 function sortStatus(a,b) {
-    let sorta = a.status + " " + a.resolution;
-    let sortb = b.status + " " + b.resolution;
-    let sortarray = [sortb, sorta];
+    var sorta = a.status + " " + a.resolution;
+    var sortb = b.status + " " + b.resolution;
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -157,9 +157,9 @@ function sortStatus(a,b) {
 }
 
 function sortReverseStatus(a,b) {
-    let sorta = a.status + " " + a.resolution;
-    let sortb = b.status + " " + b.resolution;
-    let sortarray = [sortb, sorta];
+    var sorta = a.status + " " + a.resolution;
+    var sortb = b.status + " " + b.resolution;
+    var sortarray = [sortb, sorta];
     if(sorta == sortb) {
         return 0;
     }
@@ -176,11 +176,11 @@ function sortReverseStatus(a,b) {
 
 
 function sortModified(a,b) {
-    let sorta = a.last_change_time.split("T");
-    let sortb = b.last_change_time.split("T");
+    var sorta = a.last_change_time.split("T");
+    var sortb = b.last_change_time.split("T");
     
-    let epocha = new Date();
-    let epochb = new Date();
+    var epocha = new Date();
+    var epochb = new Date();
     epocha.setFullYear(sorta[0].split("-")[0], 
                        sorta[0].split("-")[1]-1, 
                        sorta[0].split("-")[2]);
@@ -192,11 +192,11 @@ function sortModified(a,b) {
 }
 
 function sortReverseModified(a,b) {
-    let sorta = a.last_change_time.split("T");
-    let sortb = b.last_change_time.split("T");
+    var sorta = a.last_change_time.split("T");
+    var sortb = b.last_change_time.split("T");
     
-    let epocha = new Date();
-    let epochb = new Date();
+    var epocha = new Date();
+    var epochb = new Date();
     epocha.setFullYear(sorta[0].split("-")[0], 
                        sorta[0].split("-")[1]-1, 
                        sorta[0].split("-")[2]);
