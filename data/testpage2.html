@@ -105,7 +105,7 @@
               border:1px solid black;
           }
           #breakdown {
-              float:left;
+              float: left;
               border:1px solid black;
           }
           #breakdown td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
@@ -114,6 +114,12 @@
           }
           #breakdown th {
             border:1px dashed!important;
+          }
+          #breakdown table {
+            float:left;
+          }
+          #pie {
+            float:right;
           }
           #milestone td, #patches td {
               min-width: 50px;
@@ -200,14 +206,6 @@
             </table>
         </div>
 
-        <div id="breakdown">
-            <h3>Bug Breakdown</h3>
-            <table id="breakdownTable">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-        </div>
-
         <br style="clear:both;"/><br/>
 
         <div id="bugdiv">
@@ -249,6 +247,14 @@
                     <th id="sortPatches">Patches <img/></th>
                 </tr>
               </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+        
+        <div id="breakdown">
+            <h3>Bug Breakdown</h3>
+            <table id="breakdownTable">
+              <thead></thead>
               <tbody></tbody>
             </table>
         </div>
