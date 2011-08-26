@@ -45,6 +45,8 @@ self.port.on("breakdownFixed", function(data) {
     var head = document.getElementById("breakdownTable")
                        .getElementsByTagName("thead")[0];
 
+    var mstones = [];
+
     // The various datapoints used in the table
     var counts = data.data;
     var xHeads = data.x_labels;
@@ -66,8 +68,7 @@ self.port.on("breakdownFixed", function(data) {
       let header = document.createElement("th");
       header.innerHTML = xHeads[i];
       header.setAttribute("index", head.childNodes.length);
-      //console.log(header.getAttribute("index") + " " + header.innerHTML);
-      head.appendChild(header); 
+      head.appendChild(header);
     }
 
     // For every row added to the table, parse out the data and add a table cell for it
@@ -88,6 +89,23 @@ self.port.on("breakdownFixed", function(data) {
         tablerows[i].appendChild(cell);
       }
     }
+
+    // Draw a pie chart of the milestone breakdown, sum all milestones if all are shown
+    let milestone = [];
+    if(typeof counts[0] == "number") {
+      for(i in counts) {
+        milestone.push(counts[i])
+      }
+    } else {
+      for(i in counts) {
+        let thisSum = 0;
+        for(j in counts[i]) {
+          thisSum = thisSum + counts[i][j];
+        }
+        milestone.push(thisSum);
+      }
+    }
+    pie(milestone);
 });
 
 // These are the incoming bugs from the main addon script
@@ -463,6 +481,49 @@ document.getElementById("resetFilter")
             bugtable.removeAttribute("filterComponent");
             bugtable.removeAttribute("invert");
         },false);
+
+// Function to draw a pie chart from the given data set
+function pie(data) {
+    var w = 400,
+    h = 400,
+    r = Math.min(w, h) / 2,
+    color = d3.scale.category20(),
+    donut = d3.layout.pie(),
+    arc = d3.svg.arc().innerRadius(r * .6).outerRadius(r);
+
+    var vis = d3.select("#breakdown")
+      .append("svg:svg")
+        .data([data])
+        .attr("id", "pie")
+        .attr("width", w)
+        .attr("height", h);
+
+    var arcs = vis.selectAll("g.arc")
+        .data(donut)
+      .enter().append("svg:g")
+        .attr("class", "arc")
+        .attr("transform", "translate(" + r + "," + r + ")");
+
+    arcs.append("svg:path")
+        .attr("fill", function(d, i) { return color(i); })
+        .attr("d", arc);
+
+    arcs.append("svg:text")
+        .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .attr("display", function(d) { return d.value > .15 ? null : "none"; })
+        .text(function(d, i) { return d.value; });
+
+    // Give the breakdown table the colors from the pie chart
+    var tablerows = document.getElementById("breakdownTable")
+                            .getElementsByTagName("tbody")[0]
+                            .getElementsByTagName("tr");
+    var paths = document.getElementById("pie").getElementsByTagName("path");
+    for(i in tablerows) {
+        tablerows[i].style.background = paths[i].getAttribute("fill");
+    }
+}
 
 /* //XXX NOT USED (But maybe useful later?)
 document.getElementById("getAttachments")
