@@ -101,13 +101,21 @@
               border:1px solid black;
           }
           #patches {
-              float:right;
+              float:left;
               border:1px solid black;
           }
           #bugdiv {
               clear:both;
               float:left;
               border:1px solid black;
+          }
+
+          #mileForm {
+              float:left;
+              margin-left: auto;
+              margin-right: auto;
+              border:1px solid black;
+              width:500px;
           }
           #breakdown {
               float: left;
@@ -148,34 +156,42 @@
           #bugtable {
               clear: both;
           }
+          
+          option.obsolete {
+              color:grey;
+          }
+          
+          #milestoneSelect * {
+              min-width: 50px !important;
+          }
+          #componentFilter * {
+              min-width: 100px !important;
+          }
+
+          body[initial] :not(#mileForm) *{
+            opacity: 0.1;
+          }
+          option {
+            opacity: 1!important;
+          }
+          body[activeRequests] #getBugs, body:not([activeRequests]) #gettingBugsText {
+            display:none;
+          }
+          body[activeRequests] #gettingBugsText, body:not([activeRequests]) #getBugs {
+            display:inline;
+          }
         </style>
     </head>
     
-    <body>
-        <div id="milestone">
-            <h3>Bug statistics</h3>
-            <table>
-              <tr>
-                <td>Milestone</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Bug count</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Resolved count</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Assigned</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Unassigned</td>
-                <td></td>
-              </tr>
-            </table>
+    <body initial="true">
+        <div id="mileForm">
+            <h3>Pick your data:</h3>
+            Milestone: 
+            <select id="milestoneSelect">
+              <option>All</option>
+            <select>
+            <input id="getBugs" value="Get Bugs" type="button"/>
+            <span id="gettingBugsText">Getting your bugs!</span>
         </div>
         <div id="patches">
             <h3>Patch statistics</h3>
@@ -213,21 +229,28 @@
 
         <br style="clear:both;"/><br/>
 
+        <div id="breakdown">
+            <h3>Bug Breakdown</h3>
+            <table id="breakdownTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+        </div>
         <div id="bugdiv">
             <div class="filterparent">
               <p>
                 <input id="fixedFilter" type="checkbox"/>
-                <label>Filter Fixed Bugs</label>
+                <label>Hide Fixed Bugs</label>
               </p>
               <p>
                 <input id="patchFilter" type="checkbox"/>
-                <label>Filter Bugs without Patches</label>
+                <label>Hide Bugs without Patches</label>
               </p>
               <p>
                 <select id="componentFilter">
                   <option value="All">All</option>
-                  <option value="General">General</option>
-                  <option value="Documentation">Documentation</option>
+                  <!-- <option value="General">General</option>
+                  <option value="Documentation">Documentation</option> -->
                 </select>
                 <label>Filter by Component</label>
               </p>
@@ -243,7 +266,7 @@
               <thead>
                 <tr>
                     <th id="sortIDs">ID <img/></th>
-                    <th id="sortMilestones">Milestone <img/></th>
+                    <th id="sortMilestones">Mstone <img/></th>
                     <th id="sortSummary">Summary <img/></th>
                     <th id="sortAssignee">Assignee <img/></th>
                     <th id="sortStatus">Status <img/></th>
@@ -256,12 +279,5 @@
             </table>
         </div>
         
-        <div id="breakdown">
-            <h3>Bug Breakdown</h3>
-            <table id="breakdownTable">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-        </div>
     </body>
 </html>

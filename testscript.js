@@ -1,4 +1,3 @@
-//self.postMessage("working");
 var trs;
 var breakdowntrs;
 
@@ -14,6 +13,70 @@ var reviewminus = 0;
 var feedbackminus = 0;
 var reviewplus = 0;
 var feedbackplus = 0;
+
+var milestones = [];
+var components = [];
+
+var milestoneSelect = document.getElementById("milestoneSelect");
+var componentFilter = document.getElementById("componentFilter");
+
+var requestCount = 0;
+
+var bugButton = document.getElementById("getBugs");
+bugButton.addEventListener("click", function() {
+  var selectedMilestone = milestoneSelect.item(milestoneSelect.selectedIndex).innerHTML;
+
+  clearTable();
+
+  requestCount = 2;
+
+  getBreakdown(selectedMilestone);
+  getBugs(selectedMilestone);
+
+  document.body.removeAttribute("initial");
+  document.body.setAttribute("activeRequests", "true");
+}, false);
+
+var milestoneRequest = new XMLHttpRequest();
+milestoneRequest.open('GET', "https://api-dev.bugzilla.mozilla.org/latest/configuration?flags=0&cached_ok=1", true);
+milestoneRequest.setRequestHeader("Accept", "application/json");
+milestoneRequest.setRequestHeader("Content-Type", "application/json");
+milestoneRequest.onreadystatechange = function(aEvt) {
+  if(milestoneRequest.readyState == 4) {
+    if(milestoneRequest.status == 200) {
+      var sdkinfo = JSON.parse(milestoneRequest.response).product["Add-on SDK"];
+
+      // Set the milestone dropdown
+      var sdkmilestones = sdkinfo.target_milestone;
+      for(i in sdkmilestones) {
+          milestones.push(sdkmilestones[i]);
+      }
+
+      for(i in milestones) {
+        var option = document.createElement("option");
+        option.innerHTML = milestones[i];
+        if(milestones[i].match("1.0b") == "1.0b" || milestones[i].match("0.") == "0.") {
+          option.setAttribute("class", "obsolete");
+        }
+        milestoneSelect.appendChild(option);
+      }
+
+      // Set the components dropdown
+      var sdkcomponents = sdkinfo.component;
+      for(i in sdkcomponents) {
+        components.push(i);
+      }
+
+      for(i in components) {
+        var option = document.createElement("option");
+        option.innerHTML = components[i];
+        componentFilter.appendChild(option);
+      }
+    }
+  }
+};
+milestoneRequest.send(null);
+
 
 
 // Add the sorting arrow image to each header
@@ -35,11 +98,40 @@ for(i=0;i<headers.length;i++) {
         "%D4%E8%9F%00%00%00%00IEND%AEB%60%82";
 }
 
-getbreakdown();
+function clearTable() {
+  // Reset counters
+  resolved = 0;
+  unassigned = 0;
+  totalPatches = 0;
+  pendingFeedback = 0;
+  pendingReviews = 0;
+  reviewminus = 0;
+  feedbackminus = 0;
+  reviewplus = 0;
+  feedbackplus = 0;
+
+  document.getElementById("bugtable").getElementsByTagName("tbody")[0].innerHTML = "";
+  document.getElementById("breakdown").innerHTML = "<h3>Bug Breakdown</h3>" +
+          "<table id='breakdownTable'><thead></thead><tbody></tbody></table>";
+
+  var patchRows = document.getElementById("patches").getElementsByTagName("tr");
+  for(i in patchRows) {
+    if(patchRows[i] == "[object HTMLTableRowElement]") {
+      patchRows[i].getElementsByTagName("td")[1].innerHTML = "";
+    }
+  }
+}
 
 // initiate xhr to get breakdown data, pass it to d3.js
-function getbreakdown() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=status";
+function getBreakdown(milestone) {
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&&MILESTONE&&&x_axis_field=target_milestone&y_axis_field=status";
+
+  if(milestone == "All") {
+    someURL = someURL.replace("&&MILESTONE&&", ""); 
+  } else {
+    someURL = someURL.replace("&&MILESTONE&&", "&target_milestone=" + milestone); 
+  }
+
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
   request.setRequestHeader("Accept", "application/json");
@@ -47,34 +139,51 @@ function getbreakdown() {
   request.onreadystatechange = function (aEvt) {
   //for(i in request.response) {
     if (request.readyState == 4) {
-       if(request.status == 200) {
-         breakdownFixed(JSON.parse(request.response));
-       } else {
-         alert(request.status);
-       }
+      if(request.status == 200) {
+        breakdownFixed(JSON.parse(request.response));
+        requestCount = requestCount - 1;
+        if(requestCount == 0) {
+          document.body.removeAttribute("activeRequests");
+        }
+      } else {
+        //alert(request.status);
+      }
     }
   };
   request.send(null);
 }
 
-getBugs();
 
-function getBugs() {
+
+function getBugs(milestone) {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/" +
-    "bug?product=Add-on%20SDK&resolution=---&include_fields=" +
+    "bug?product=Add-on%20SDK&&MILESTONE&&&&RESOLUTION&&&include_fields=" +
     "id,summary,assigned_to,creation_time,last_change_time," +
     "resolution,status,target_milestone,whiteboard,severity,attachments,component";
+
+  if(milestone == "All") {
+    someURL = someURL.replace("&&MILESTONE&&", ""); 
+    someURL = someURL.replace("&&RESOLUTION&&", "&resolution=---"); 
+  } else {
+    someURL = someURL.replace("&&MILESTONE&&", "&target_milestone=" + milestone); 
+    someURL = someURL.replace("&&RESOLUTION&&", ""); 
+  }
+  
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
   request.setRequestHeader("Accept", "application/json");
   request.setRequestHeader("Content-Type", "application/json");
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
-       if(request.status == 200) {
-         bugs(JSON.parse(request.response));
-       } else {
-         alert(request.status);
-       }
+      if(request.status == 200) {
+        bugs(JSON.parse(request.response), milestone);
+        requestCount = requestCount - 1;
+        if(requestCount == 0) {
+           document.body.removeAttribute("activeRequests");
+        }
+      } else {
+        //alert(request.status);
+      }
     }
   };
   request.send(null);
@@ -105,8 +214,9 @@ function breakdownFixed(data) {
           .attr("counts", function(d) { return d; });
 
     // Put a blank th in the table for the empty top-left spot
-    var blank = document.createElement("th");
-    head.appendChild(blank);
+    var mstoneheader = document.createElement("th");
+    mstoneheader.innerHTML = "Milestone"
+    head.appendChild(mstoneheader);
 
     // Add a header element for each column in the table
     // XXX TODO Add sorting? (It's all numbers, should be easy...)
@@ -156,7 +266,7 @@ function breakdownFixed(data) {
 
 // These are the incoming bugs from the main addon script
 //self.port.on("bugs", function(incoming) {
-function bugs(incoming) {
+function bugs(incoming, milestone) {
     var bugs = incoming["bugs"];
 
     // Use d3.js to add a row for each bug automagically, assigning attributes
@@ -199,19 +309,6 @@ function bugs(incoming) {
             fillRow(rows[i]);
         } catch(e) { console.log(i + " " + e); }
     }
-
-    // Now that all the rows are filled in, calculate some info about the bugs
-    var mstonerows = document.getElementById("milestone")
-                             .getElementsByTagName("tr");
-    mstonerows[0].lastElementChild.innerHTML = incoming["milestone"];
-    mstonerows[1].lastElementChild.innerHTML = bugs.length;
-    if(incoming["milestone"] == "All") {
-        mstonerows[2].lastElementChild.innerHTML = "NA";
-    } else { 
-        mstonerows[2].lastElementChild.innerHTML = resolved;
-    }
-    mstonerows[3].lastElementChild.innerHTML = bugs.length - unassigned;
-    mstonerows[4].lastElementChild.innerHTML = unassigned;
 
     // Add some stats about the patches
     var patchrows = document.getElementById("patches")
@@ -350,7 +447,9 @@ document.getElementById("sortIDs")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -369,7 +468,9 @@ document.getElementById("sortMilestones")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -388,7 +489,9 @@ document.getElementById("sortSummary")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -407,7 +510,9 @@ document.getElementById("sortAssignee")
                                .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -426,7 +531,9 @@ document.getElementById("sortStatus")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -446,7 +553,9 @@ document.getElementById("sortCreated")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
@@ -465,7 +574,9 @@ document.getElementById("sortModified")
                                        .getElementsByTagName("th");
             for(i in otherHeaders) {
                 if(otherHeaders[i] != tgt) {
-                    otherHeaders[i].removeAttribute("sorted");
+                    if(otherHeaders[i].removeAttribute) {
+                      otherHeaders[i].removeAttribute("sorted");
+                    }
                 }
             }
         }, false);
