@@ -15,6 +15,13 @@
               border:1px dashed #000000;
           }
 
+          *[unneeded] {
+            display:none;
+          }
+          *[notloaded] {
+            display:none;
+          }
+
           #bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
               display:none;
           }
@@ -97,11 +104,10 @@
               margin: 10px !important;
           }
           #milestone {
-              float:left;
               border:1px solid black;
           }
           #patches {
-              float:left;
+              float:right;
               border:1px solid black;
           }
           #bugdiv {
@@ -118,6 +124,7 @@
               width:500px;
           }
           #breakdown {
+              min-width:600px;
               float: left;
               border:1px solid black;
           }
@@ -132,7 +139,7 @@
             float:left;
           }
           #pie {
-            float:right;
+            float:left;
           }
           #milestone td, #patches td {
               min-width: 50px;
@@ -180,6 +187,65 @@
           body[activeRequests] #gettingBugsText, body:not([activeRequests]) #getBugs {
             display:inline;
           }
+          div {
+            text-align:center;
+          }
+          #bugtable td:nth-child(6), #bugtable td:nth-child(7) {
+            max-width: 90px!important;
+            width: 90px!important;
+            text-align:center;
+          }
+          #bugtable td:nth-child(4), #bugtable td:nth-child(5) {
+            max-width: 90px!important;
+            width: 90px!important;
+            overflow:hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+            text-align:center;
+          }
+          #bugtable td:nth-child(3) {
+            max-width: 300px!important;
+            width: 300px!important;
+          }
+          #bugtable td:nth-child(2) {
+            max-width: 70px!important;
+            width: 70px!important;
+            text-align:center;
+          }
+          #bugtable td:nth-child(1) {
+            max-width: 70px!important;
+            width: 70px!important;
+            text-align:center;
+          }
+
+
+          #bugtable th:nth-child(6), #bugtable th:nth-child(7) {
+            max-width: 90px!important;
+            width: 90px!important;
+            text-align:center;
+          }
+          #bugtable th:nth-child(4), #bugtable th:nth-child(5) {
+            max-width: 90px!important;
+            width: 90px!important;
+            overflow:hidden;
+            white-space: nowrap;
+            text-overflow:ellipsis;
+            text-align:center;
+          }
+          #bugtable th:nth-child(3) {
+            max-width: 300px!important;
+            width: 300px!important;
+          }
+          #bugtable th:nth-child(2) {
+            max-width: 70px!important;
+            width: 70px!important;
+            text-align:center;
+          }
+          #bugtable th:nth-child(1) {
+            max-width: 70px!important;
+            width: 70px!important;
+            text-align:center;
+          }
         </style>
     </head>
     
@@ -190,11 +256,18 @@
             <select id="milestoneSelect">
               <option>All</option>
             <select>
+            <br/>
+            <input id="fetchUnresolved" checked="true" type="checkbox"/>Include resolved bugs *
+            <br/>
+            <input id="fetchPatches" checked="true" type="checkbox"/>Include patch info *
+            <br/><br/>
             <input id="getBugs" value="Get Bugs" type="button"/>
             <span id="gettingBugsText">Getting your bugs!</span>
+            <br/><br/>
+            <p>* Uncheck these for faster searches</p>
         </div>
-        <div id="patches">
-            <h3>Patch statistics</h3>
+        <div notloaded="true" id="patches">
+            <h3>Patch statistics <br/>(for open bugs)</h3>
             <table>
               <tr>
                 <td>Total Patches</td>
@@ -227,16 +300,14 @@
             </table>
         </div>
 
-        <br style="clear:both;"/><br/>
-
-        <div id="breakdown">
+        <div notloaded="true" id="breakdown">
             <h3>Bug Breakdown</h3>
             <table id="breakdownTable">
               <thead></thead>
               <tbody></tbody>
             </table>
         </div>
-        <div id="bugdiv">
+        <div notloaded="true" id="bugdiv">
             <div class="filterparent">
               <p>
                 <input id="fixedFilter" type="checkbox"/>

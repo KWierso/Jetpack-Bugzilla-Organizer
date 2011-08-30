@@ -26,12 +26,31 @@ var bugButton = document.getElementById("getBugs");
 bugButton.addEventListener("click", function() {
   var selectedMilestone = milestoneSelect.item(milestoneSelect.selectedIndex).innerHTML;
 
+  var resolved = document.getElementById("fetchUnresolved").checked;
+  var patches = document.getElementById("fetchPatches").checked;
+
+  if(!resolved) {
+    document.getElementById("fixedFilter").parentNode.setAttribute("unneeded", "true");
+  } else {
+    document.getElementById("fixedFilter").parentNode.removeAttribute("unneeded");
+  }
+
+  if(!patches) {
+    document.getElementById("patchFilter").parentNode.setAttribute("unneeded", "true");
+    document.getElementById("patches").setAttribute("unneeded", "true");
+    document.getElementById("bugtable").getElementsByTagName("th")[7].setAttribute("unneeded", "true");
+  } else {
+    document.getElementById("patchFilter").parentNode.removeAttribute("unneeded");
+    document.getElementById("patches").removeAttribute("unneeded");
+    document.getElementById("bugtable").getElementsByTagName("th")[7].removeAttribute("unneeded");
+  }
+
   clearTable();
 
   requestCount = 2;
 
-  getBreakdown(selectedMilestone);
-  getBugs(selectedMilestone);
+  getBreakdown(selectedMilestone, resolved);
+  getBugs(selectedMilestone, resolved, patches);
 
   document.body.removeAttribute("initial");
   document.body.setAttribute("activeRequests", "true");
@@ -110,6 +129,11 @@ function clearTable() {
   reviewplus = 0;
   feedbackplus = 0;
 
+
+  document.getElementById("bugdiv").setAttribute("notloaded", "true");
+  document.getElementById("breakdown").setAttribute("notloaded", "true");
+  document.getElementById("patches").setAttribute("notloaded", "true");
+
   document.getElementById("bugtable").getElementsByTagName("tbody")[0].innerHTML = "";
   document.getElementById("breakdown").innerHTML = "<h3>Bug Breakdown</h3>" +
           "<table id='breakdownTable'><thead></thead><tbody></tbody></table>";
@@ -118,18 +142,30 @@ function clearTable() {
   for(i in patchRows) {
     if(patchRows[i] == "[object HTMLTableRowElement]") {
       patchRows[i].getElementsByTagName("td")[1].innerHTML = "";
+      patchRows[i].removeAttribute("unneeded");
     }
+  }
+  var otherHeaders = document.getElementById("bugtable")
+                             .getElementsByTagName("th");
+  for(i in otherHeaders) {
+      if(otherHeaders[i].removeAttribute) {
+        otherHeaders[i].removeAttribute("sorted");
+      }
   }
 }
 
 // initiate xhr to get breakdown data, pass it to d3.js
-function getBreakdown(milestone) {
+function getBreakdown(milestone, resolved) {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&&MILESTONE&&&x_axis_field=target_milestone&y_axis_field=status";
 
   if(milestone == "All") {
     someURL = someURL.replace("&&MILESTONE&&", ""); 
   } else {
     someURL = someURL.replace("&&MILESTONE&&", "&target_milestone=" + milestone); 
+  }
+
+  if(!resolved) {
+    someURL = someURL + "&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED"
   }
 
   var request = new XMLHttpRequest();
@@ -155,11 +191,11 @@ function getBreakdown(milestone) {
 
 
 
-function getBugs(milestone) {
+function getBugs(milestone, resolved, patches) {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/" +
     "bug?product=Add-on%20SDK&&MILESTONE&&&&RESOLUTION&&&include_fields=" +
     "id,summary,assigned_to,creation_time,last_change_time," +
-    "resolution,status,target_milestone,whiteboard,severity,attachments,component";
+    "resolution,status,target_milestone,whiteboard,severity,component";
 
   if(milestone == "All") {
     someURL = someURL.replace("&&MILESTONE&&", ""); 
@@ -167,6 +203,14 @@ function getBugs(milestone) {
   } else {
     someURL = someURL.replace("&&MILESTONE&&", "&target_milestone=" + milestone); 
     someURL = someURL.replace("&&RESOLUTION&&", ""); 
+  }
+  
+  if(patches) {
+    someURL = someURL + ",attachments";
+  }
+
+  if(!resolved) {
+    someURL = someURL + "&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED"
   }
   
   var request = new XMLHttpRequest();
@@ -262,6 +306,7 @@ function breakdownFixed(data) {
       }
     }
     pie(milestone);
+    document.getElementById("breakdown").removeAttribute("notloaded");
 }
 
 // These are the incoming bugs from the main addon script
@@ -307,19 +352,24 @@ function bugs(incoming, milestone) {
     for(var i=0;i<rows.length;i++) {
         try {
             fillRow(rows[i]);
-        } catch(e) { console.log(i + " " + e); }
+        } catch(e) { /*console.log(i + " " + e);*/ }
     }
+
+    document.getElementById("bugdiv").removeAttribute("notloaded");
 
     // Add some stats about the patches
     var patchrows = document.getElementById("patches")
                             .getElementsByTagName("tr");
-    patchrows[0].lastElementChild.innerHTML = totalPatches;
-    patchrows[1].lastElementChild.innerHTML = pendingReviews;
-    patchrows[2].lastElementChild.innerHTML = reviewminus;
-    patchrows[3].lastElementChild.innerHTML = reviewplus;
-    patchrows[4].lastElementChild.innerHTML = pendingFeedback;
-    patchrows[5].lastElementChild.innerHTML = feedbackminus;
-    patchrows[6].lastElementChild.innerHTML = feedbackplus;
+    var patchCounts = [totalPatches, pendingReviews, reviewminus, 
+                       reviewplus, pendingFeedback, feedbackminus, feedbackplus]; 
+
+    for(i=0;i<patchrows.length; i++) {
+      patchrows[i].lastElementChild.innerHTML = patchCounts[i];
+      if(patchCounts[i] == 0) {
+        patchrows[i].setAttribute("unneeded", "true");
+      }
+    }
+    document.getElementById("patches").removeAttribute("notloaded");
 }
 
 // XXX NOT USED
@@ -362,6 +412,7 @@ function fillRow(row) {
     var resolved = (row.getAttribute("status").match("RESOLVED") == "RESOLVED") ||
                    (row.getAttribute("status").match("VERIFIED") == "VERIFIED");
     var flagstring = "";
+
     for(i in attachments) {
         if(attachments[i].is_patch && !attachments[i].is_obsolete) {
             row.setAttribute("hasCurrentPatch", "true");
@@ -430,7 +481,9 @@ function fillRow(row) {
 }
 
 
-
+function adjustGraph() {
+  
+}
 
 // Add click event listeners on the various table headers for sorting and filtering
 document.getElementById("sortIDs")
@@ -590,6 +643,8 @@ document.getElementById("patchFilter")
             } else {
                 bugtable.removeAttribute("filterPatch");
             }
+
+            adjustGraph();
         }, false);
 
 document.getElementById("fixedFilter")
@@ -601,6 +656,8 @@ document.getElementById("fixedFilter")
             } else {
                 bugtable.removeAttribute("filterFixed");
             }
+
+            adjustGraph();
         }, false);
 
 document.getElementById("componentFilter")
@@ -608,6 +665,8 @@ document.getElementById("componentFilter")
             var tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).innerHTML;
             var bugtable = document.getElementById("bugtable");
             bugtable.setAttribute("filterComponent", tgt);
+
+            adjustGraph();
         }, false);
 
 document.getElementById("invertFilter")
@@ -619,6 +678,8 @@ document.getElementById("invertFilter")
             } else {
                 bugtable.removeAttribute("invert");
             }
+
+            adjustGraph();
         }, false);
 
 document.getElementById("resetFilter")
@@ -638,12 +699,14 @@ document.getElementById("resetFilter")
             bugtable.removeAttribute("filterFixed");
             bugtable.removeAttribute("filterComponent");
             bugtable.removeAttribute("invert");
+
+            adjustGraph();
         },false);
 
 // Function to draw a pie chart from the given data set
 function pie(data) {
-    var w = 400,
-    h = 400,
+    var w = 300,
+    h = 300,
     r = Math.min(w, h) / 2,
     color = d3.scale.category20(),
     donut = d3.layout.pie(),
