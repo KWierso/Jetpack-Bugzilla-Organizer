@@ -152,6 +152,22 @@ function clearTable() {
         otherHeaders[i].removeAttribute("sorted");
       }
   }
+
+var inputs = document.getElementById("bugdiv")
+                     .getElementsByTagName("input");
+
+for(i in inputs) {
+  if(inputs[i].type == "checkbox") {
+    inputs[i].checked = false;
+  }
+}
+document.getElementById("componentFilter").selectedIndex = 0;
+
+var bugtable = document.getElementById("bugtable");
+bugtable.removeAttribute("filterPatch");
+bugtable.removeAttribute("filterFixed");
+bugtable.removeAttribute("filterComponent");
+bugtable.removeAttribute("invert");
 }
 
 // initiate xhr to get breakdown data, pass it to d3.js
