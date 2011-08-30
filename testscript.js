@@ -91,6 +91,31 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         option.innerHTML = components[i];
         componentFilter.appendChild(option);
       }
+      
+      var urlquery = window.location.search.substring(1);
+      var vars = urlquery.split("&");
+      for (var i=0;i<vars.length;i++) { 
+        var pair = vars[i].split("=");
+        if(pair[0] == "milestone" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          var milestoneOptions = document.getElementById("milestoneSelect").getElementsByTagName("option");
+          for(j=0;j<milestoneOptions.length;j++) {
+            if(milestoneOptions[j].innerHTML.toLowerCase() == pair[1]) {
+              milestoneSelect.selectedIndex = milestoneOptions[j].index;
+              break;
+            } 
+          }
+        }
+        if(pair[0] == "patches" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          document.getElementById("fetchPatches").checked = pair[1] == "true";
+        }
+        if(pair[0] == "resolved" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          document.getElementById("fetchUnresolved").checked = pair[1] == "true";
+        }
+      }
+      document.getElementById("mileForm").removeAttribute("notloaded");
     }
   }
 };
