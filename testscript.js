@@ -20,6 +20,9 @@ var components = [];
 var milestoneSelect = document.getElementById("milestoneSelect");
 var componentFilter = document.getElementById("componentFilter");
 
+var d = new Date();
+var epoch;
+
 var requestCount = 0;
 
 var bugButton = document.getElementById("getBugs");
@@ -45,10 +48,15 @@ bugButton.addEventListener("click", function() {
     document.getElementById("bugtable").getElementsByTagName("th")[7].removeAttribute("unneeded");
   }
 
-  clearTable();
+  if(!bugButton.getAttribute("autoclick") == "true") {
+    clearTable();
+    bugButton.removeAttribute("autoclick");
+  }
 
   requestCount = 2;
 
+  d = new Date();
+  epoch = d.getTime();
   getBreakdown(selectedMilestone, resolved);
   getBugs(selectedMilestone, resolved, patches);
 
@@ -91,17 +99,21 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         option.innerHTML = components[i];
         componentFilter.appendChild(option);
       }
-      
+
+      var searchParams = 0;
       var urlquery = window.location.search.substring(1);
       var vars = urlquery.split("&");
       for (var i=0;i<vars.length;i++) { 
         var pair = vars[i].split("=");
+
+        // Preset the search parameters if they're given
         if(pair[0] == "milestone" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
           var milestoneOptions = document.getElementById("milestoneSelect").getElementsByTagName("option");
           for(j=0;j<milestoneOptions.length;j++) {
             if(milestoneOptions[j].innerHTML.toLowerCase() == pair[1]) {
               milestoneSelect.selectedIndex = milestoneOptions[j].index;
+              searchParams = searchParams + 1;
               break;
             } 
           }
@@ -109,11 +121,66 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         if(pair[0] == "patches" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
           document.getElementById("fetchPatches").checked = pair[1] == "true";
+          searchParams = searchParams + 1;
         }
         if(pair[0] == "resolved" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
           document.getElementById("fetchUnresolved").checked = pair[1] == "true";
+          searchParams = searchParams + 1;
         }
+
+        // Preset the filter parameters if they're given
+        if(pair[0] == "invert" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          if(pair[1] == "true")
+            document.getElementById("invertFilter").click();
+        }
+        if(pair[0] == "fixed" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          if(pair[1] == "true")
+            document.getElementById("fixedFilter").click();
+        }
+        if(pair[0] == "patchless" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          if(pair[1] == "true")
+            document.getElementById("patchFilter").click();
+        }
+        if(pair[0] == "modified" && pair[1]) {
+          pair[1] = parseInt(pair[1]);
+          document.getElementById("activityFilter").selectedIndex = pair[1];
+
+          var evt = document.createEvent("HTMLEvents");
+          evt.initEvent("change",false,false);
+          document.getElementById("activityFilter").dispatchEvent(evt);
+        }
+        if(pair[0] == "filed" && pair[1]) {
+          pair[1] = parseInt(pair[1]);
+          document.getElementById("ageFilter").selectedIndex = pair[1];
+
+          var evt = document.createEvent("HTMLEvents");
+          evt.initEvent("change",false,false);
+          document.getElementById("ageFilter").dispatchEvent(evt);
+        }
+        if(pair[0] == "component" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          var componentOptions = componentFilter.getElementsByTagName("option");
+          for(j=0;j<componentOptions.length;j++) {
+            if(componentOptions[j].innerHTML.toLowerCase() == pair[1]) {
+              componentFilter.selectedIndex = componentOptions[j].index;
+              break;
+            } 
+          }
+
+          var evt = document.createEvent("HTMLEvents");
+          evt.initEvent("change",false,false);
+          document.getElementById("componentFilter").dispatchEvent(evt);
+        }
+      }
+
+      // If there were search parameters present, auto-fire the search
+      if(searchParams > 0) {
+        bugButton.setAttribute("autoclick", "true");
+        bugButton.click();
       }
       document.getElementById("mileForm").removeAttribute("notloaded");
     }
@@ -187,11 +254,15 @@ for(i in inputs) {
   }
 }
 document.getElementById("componentFilter").selectedIndex = 0;
+document.getElementById("ageFilter").selectedIndex = 0;
+document.getElementById("activityFilter").selectedIndex = 0;
 
 var bugtable = document.getElementById("bugtable");
 bugtable.removeAttribute("filterPatch");
 bugtable.removeAttribute("filterFixed");
 bugtable.removeAttribute("filterComponent");
+bugtable.removeAttribute("filterActivity");
+bugtable.removeAttribute("filterAge");
 bugtable.removeAttribute("invert");
 }
 
@@ -393,7 +464,7 @@ function bugs(incoming, milestone) {
     for(var i=0;i<rows.length;i++) {
         try {
             fillRow(rows[i]);
-        } catch(e) { /*console.log(i + " " + e);*/ }
+        } catch(e) { alert(e); }
     }
 
     document.getElementById("bugdiv").removeAttribute("notloaded");
@@ -435,6 +506,51 @@ function fillRow(row) {
     fields.push(row.getAttribute("status").replace(" undefined", ""));
     fields.push(row.getAttribute("bugcreationtime").split("T")[0]);
     fields.push(row.getAttribute("bugchangetime").split("T")[0]);
+
+
+
+
+
+
+    // Flag row with approximate creation and modification times
+    var bugepoch = new Date();
+    var bugdate = row.getAttribute("bugcreationtime").split("T");
+    var activitydate = row.getAttribute("bugchangetime").split("T");
+
+    bugepoch.setFullYear(bugdate[0].split("-")[0],
+        bugdate[0].split("-")[1]-1, bugdate[0].split("-")[2]);
+
+    if(epoch - bugepoch < 604800000) {
+        row.setAttribute("bugAge", "New");
+    } else 
+    if(epoch - bugepoch < 2678400000) {
+        row.setAttribute("bugAge", "Month");
+    } else 
+    if(epoch - bugepoch < 5356800000) {
+        row.setAttribute("bugAge", "2Month");
+    } else {
+        row.setAttribute("bugAge", "3PlusMonth");
+    }
+
+    bugepoch.setFullYear(activitydate[0].split("-")[0],
+        activitydate[0].split("-")[1]-1, activitydate[0].split("-")[2]);
+
+    if(epoch - bugepoch < 604800000) {
+        row.setAttribute("bugActivity", "New");
+    } else 
+    if(epoch - bugepoch < 2678400000) {
+        row.setAttribute("bugActivity", "Month");
+    } else 
+    if(epoch - bugepoch < 5356800000) {
+        row.setAttribute("bugActivity", "2Month");
+    } else {
+        row.setAttribute("bugActivity", "3PlusMonth");
+    }
+    
+
+
+
+
 
     var attachments = JSON.parse(row.getAttribute("attachments"));
     
@@ -723,6 +839,24 @@ document.getElementById("invertFilter")
             adjustGraph();
         }, false);
 
+document.getElementById("ageFilter")
+        .addEventListener("change", function(e) {
+            var tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).value;
+            var bugtable = document.getElementById("bugtable");
+            bugtable.setAttribute("filterAge", tgt);
+            
+            adjustGraph();
+        }, false);
+
+document.getElementById("activityFilter")
+        .addEventListener("change", function(e) {
+            var tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).value;
+            var bugtable = document.getElementById("bugtable");
+            bugtable.setAttribute("filterActivity", tgt);
+
+            adjustGraph();
+        }, false);
+
 document.getElementById("resetFilter")
         .addEventListener("click", function(e) {
             var inputs = document.getElementById("bugdiv")
@@ -740,6 +874,8 @@ document.getElementById("resetFilter")
             bugtable.removeAttribute("filterFixed");
             bugtable.removeAttribute("filterComponent");
             bugtable.removeAttribute("invert");
+            bugtable.removeAttribute("filterAge");
+            bugtable.removeAttribute("filterActivity");
 
             adjustGraph();
         },false);
