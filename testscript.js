@@ -1,6 +1,15 @@
 var trs;
 var breakdowntrs;
 
+// state trackers
+var state = {
+  "breakdown":null, 
+  "bugs":null, 
+  "milestone":null,
+  "resolved":null,
+  "patches":null
+};
+
 // Bug stat counters
 var resolved = 0;
 var unassigned = 0;
@@ -20,17 +29,49 @@ var components = [];
 var milestoneSelect = document.getElementById("milestoneSelect");
 var componentFilter = document.getElementById("componentFilter");
 
+var fetchUnresolved = document.getElementById("fetchUnresolved");
+var fetchPatches = document.getElementById("fetchPatches");
+
 var d = new Date();
 var epoch;
 
 var requestCount = 0;
 
+// When the page state changes, try to bring things back
+window.onpopstate = function(event) {
+  if(event.state != null) {
+    restoreState(event.state);
+  } else {
+    clearTable();
+  }
+};  
+
+// Set the form from the state and bring back the bug/breakdown tables
+function restoreState(thisState) {
+  fetchUnresolved.checked = resolved;
+  fetchPatches.checked = patches;
+
+  thisState.milestone = thisState.milestone.toLowerCase();
+  var milestoneOptions = milestoneSelect.getElementsByTagName("option");
+  for(j=0;j<milestoneOptions.length;j++) {
+    if(milestoneOptions[j].innerHTML.toLowerCase() == thisState.milestone) {
+      milestoneSelect.selectedIndex = milestoneOptions[j].index;
+      break;
+    } 
+  }
+
+  clearTable();
+
+  breakdownFixed(thisState.breakdown);
+  bugs(thisState.bugs, thisState.milestone);
+}
+
 var bugButton = document.getElementById("getBugs");
 bugButton.addEventListener("click", function() {
   var selectedMilestone = milestoneSelect.item(milestoneSelect.selectedIndex).innerHTML;
 
-  var resolved = document.getElementById("fetchUnresolved").checked;
-  var patches = document.getElementById("fetchPatches").checked;
+  var resolved = fetchUnresolved.checked;
+  var patches = fetchPatches.checked;
 
   if(!resolved) {
     document.getElementById("fixedFilter").parentNode.setAttribute("unneeded", "true");
@@ -48,15 +89,26 @@ bugButton.addEventListener("click", function() {
     document.getElementById("bugtable").getElementsByTagName("th")[7].removeAttribute("unneeded");
   }
 
-  if(!bugButton.getAttribute("autoclick") == "true") {
-    clearTable();
+  // XXX Not sure if this is still needed...
+  if(bugButton.getAttribute("autoclick") == "true") {
     bugButton.removeAttribute("autoclick");
   }
+
+  clearTable();
 
   requestCount = 2;
 
   d = new Date();
   epoch = d.getTime();
+
+  var stateObj = { };
+  var url = "?milestone=" + selectedMilestone + "&patches=" + patches + "&resolved=" + resolved;
+  history.pushState(stateObj, "Jetpack Bug Dashboard", url);
+
+  state.milestone = selectedMilestone;
+  state.resolved = resolved;
+  state.patches = patches;
+
   getBreakdown(selectedMilestone, resolved);
   getBugs(selectedMilestone, resolved, patches);
 
@@ -109,7 +161,7 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         // Preset the search parameters if they're given
         if(pair[0] == "milestone" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
-          var milestoneOptions = document.getElementById("milestoneSelect").getElementsByTagName("option");
+          var milestoneOptions = milestoneSelect.getElementsByTagName("option");
           for(j=0;j<milestoneOptions.length;j++) {
             if(milestoneOptions[j].innerHTML.toLowerCase() == pair[1]) {
               milestoneSelect.selectedIndex = milestoneOptions[j].index;
@@ -120,12 +172,12 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         }
         if(pair[0] == "patches" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
-          document.getElementById("fetchPatches").checked = pair[1] == "true";
+          fetchPatches.checked = pair[1] == "true";
           searchParams = searchParams + 1;
         }
         if(pair[0] == "resolved" && pair[1]) {
           pair[1] = pair[1].toLowerCase();
-          document.getElementById("fetchUnresolved").checked = pair[1] == "true";
+          fetchUnresolved.checked = pair[1] == "true";
           searchParams = searchParams + 1;
         }
 
@@ -173,7 +225,7 @@ milestoneRequest.onreadystatechange = function(aEvt) {
 
           var evt = document.createEvent("HTMLEvents");
           evt.initEvent("change",false,false);
-          document.getElementById("componentFilter").dispatchEvent(evt);
+          componentFilter.dispatchEvent(evt);
         }
       }
 
@@ -221,6 +273,14 @@ function clearTable() {
   reviewplus = 0;
   feedbackplus = 0;
 
+ // Clear the state
+  state = {
+    "breakdown":null, 
+    "bugs":null, 
+    "milestone":null,
+    "resolved":null,
+    "patches":null
+  };
 
   document.getElementById("bugdiv").setAttribute("notloaded", "true");
   document.getElementById("breakdown").setAttribute("notloaded", "true");
@@ -245,25 +305,25 @@ function clearTable() {
       }
   }
 
-var inputs = document.getElementById("bugdiv")
-                     .getElementsByTagName("input");
+  var inputs = document.getElementById("bugdiv")
+                       .getElementsByTagName("input");
 
-for(i in inputs) {
-  if(inputs[i].type == "checkbox") {
-    inputs[i].checked = false;
+  for(i in inputs) {
+    if(inputs[i].type == "checkbox") {
+      inputs[i].checked = false;
+    }
   }
-}
-document.getElementById("componentFilter").selectedIndex = 0;
-document.getElementById("ageFilter").selectedIndex = 0;
-document.getElementById("activityFilter").selectedIndex = 0;
+  componentFilter.selectedIndex = 0;
+  document.getElementById("ageFilter").selectedIndex = 0;
+  document.getElementById("activityFilter").selectedIndex = 0;
 
-var bugtable = document.getElementById("bugtable");
-bugtable.removeAttribute("filterPatch");
-bugtable.removeAttribute("filterFixed");
-bugtable.removeAttribute("filterComponent");
-bugtable.removeAttribute("filterActivity");
-bugtable.removeAttribute("filterAge");
-bugtable.removeAttribute("invert");
+  var bugtable = document.getElementById("bugtable");
+  bugtable.removeAttribute("filterPatch");
+  bugtable.removeAttribute("filterFixed");
+  bugtable.removeAttribute("filterComponent");
+  bugtable.removeAttribute("filterActivity");
+  bugtable.removeAttribute("filterAge");
+  bugtable.removeAttribute("invert");
 }
 
 // initiate xhr to get breakdown data, pass it to d3.js
@@ -288,10 +348,13 @@ function getBreakdown(milestone, resolved) {
   //for(i in request.response) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        breakdownFixed(JSON.parse(request.response));
         requestCount = requestCount - 1;
+        state.breakdown = JSON.parse(request.response);
+        breakdownFixed(JSON.parse(request.response));
         if(requestCount == 0) {
           document.body.removeAttribute("activeRequests");
+          history.replaceState(state, "Jetpack Bug Dashboard", window.location);
+          //history.replaceState({"bug":"none"}, "Jetpack Bug Dashboard", window.location);
         }
       } else {
         //alert(request.status);
@@ -332,11 +395,15 @@ function getBugs(milestone, resolved, patches) {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        bugs(JSON.parse(request.response), milestone);
         requestCount = requestCount - 1;
+        state.bugs = JSON.parse(request.response);
+        bugs(JSON.parse(request.response), milestone);
         if(requestCount == 0) {
-           document.body.removeAttribute("activeRequests");
+          document.body.removeAttribute("activeRequests");
+          history.replaceState(state, "Jetpack Bug Dashboard", window.location);
+          //history.replaceState({"bug":"none"}, "Jetpack Bug Dashboard", window.location);
         }
+        
       } else {
         //alert(request.status);
       }
@@ -419,6 +486,8 @@ function breakdownFixed(data) {
     }
     pie(milestone);
     document.getElementById("breakdown").removeAttribute("notloaded");
+
+    return data;
 }
 
 // These are the incoming bugs from the main addon script
@@ -482,6 +551,8 @@ function bugs(incoming, milestone) {
       }
     }
     document.getElementById("patches").removeAttribute("notloaded");
+
+    return bugs;
 }
 
 // XXX NOT USED
@@ -817,8 +888,7 @@ document.getElementById("fixedFilter")
             adjustGraph();
         }, false);
 
-document.getElementById("componentFilter")
-        .addEventListener("change", function(e) {
+componentFilter.addEventListener("change", function(e) {
             var tgt = e.originalTarget.options.item(e.originalTarget.selectedIndex).innerHTML;
             var bugtable = document.getElementById("bugtable");
             bugtable.setAttribute("filterComponent", tgt);
@@ -867,7 +937,7 @@ document.getElementById("resetFilter")
                 inputs[i].checked = false;
               }
             }
-            document.getElementById("componentFilter").selectedIndex = 0;
+            componentFilter.selectedIndex = 0;
             
             var bugtable = document.getElementById("bugtable");
             bugtable.removeAttribute("filterPatch");
@@ -938,6 +1008,6 @@ document.getElementById("getAttachments")
         }, false);
 */
         
-        
+
         
         
