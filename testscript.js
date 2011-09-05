@@ -420,7 +420,7 @@ function getBugs(milestone, resolved, patches, user) {
       if(request.status == 200) {
         requestCount = requestCount - 1;
         state.bugs = JSON.parse(request.response);
-        bugs(JSON.parse(request.response), milestone, user);
+        bugs(JSON.parse(request.response), milestone, patches, user);
         if(requestCount == 0) {
           document.body.removeAttribute("activeRequests");
           history.replaceState(state, "Jetpack Bug Dashboard", window.location);
@@ -515,7 +515,7 @@ function breakdownFixed(data) {
 
 // These are the incoming bugs from the main addon script
 //self.port.on("bugs", function(incoming) {
-function bugs(incoming, milestone, user) {
+function bugs(incoming, milestone, patches, user) {
     var bugs = incoming["bugs"];
     var newBugs = [];
 
@@ -624,7 +624,8 @@ function bugs(incoming, milestone, user) {
       }
       document.getElementById("patches").removeAttribute("notloaded");
     } else {
-      document.getElementById("noPatches").removeAttribute("notloaded");
+      if(patches)
+        document.getElementById("noPatches").removeAttribute("notloaded");
     }
 
     return bugs;
