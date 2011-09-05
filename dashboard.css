@@ -161,7 +161,11 @@ body > div {
     border:1px solid black;
 }
 #patches {
-    float:right;
+    float:left;
+    border:1px solid black;
+}
+#noPatches {
+    float:left;
     border:1px solid black;
 }
 #bugdiv {

@@ -19,6 +19,10 @@
             <input id="fetchUnresolved" checked="true" type="checkbox"/>Include resolved bugs *
             <br/>
             <input id="fetchPatches" checked="true" type="checkbox"/>Include patch info *
+            <br/>
+            <label>Bugs involving this email: </label>
+            <input id="userFilterText" type="textbox" placeholder="someone@example.com"/>
+
             <br/><br/>
             <input id="getBugs" value="Get Bugs" type="button"/>
             <span id="gettingBugsText">Getting your bugs!</span>
@@ -58,7 +62,6 @@
               </tr>
             </table>
         </div>
-
         <div notloaded="true" id="breakdown">
             <h3>Bug Breakdown</h3>
             <table id="breakdownTable">
@@ -66,6 +69,9 @@
               <tbody></tbody>
             </table>
         </div>
+<div notloaded="true" id="noPatches">
+  <p>No patches meet the search criteria</p>
+</div>
         <div notloaded="true" id="bugdiv">
             <div class="filterparent">
               <p class="center">

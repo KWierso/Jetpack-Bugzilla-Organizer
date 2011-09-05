@@ -32,6 +32,8 @@ var componentFilter = document.getElementById("componentFilter");
 var fetchUnresolved = document.getElementById("fetchUnresolved");
 var fetchPatches = document.getElementById("fetchPatches");
 
+var userFilter = document.getElementById("userFilterText");
+
 var d = new Date();
 var epoch;
 
@@ -73,6 +75,8 @@ bugButton.addEventListener("click", function() {
   var resolved = fetchUnresolved.checked;
   var patches = fetchPatches.checked;
 
+  var user = userFilter.value;
+
   if(!resolved) {
     document.getElementById("fixedFilter").parentNode.setAttribute("unneeded", "true");
   } else {
@@ -89,28 +93,32 @@ bugButton.addEventListener("click", function() {
     document.getElementById("bugtable").getElementsByTagName("th")[7].removeAttribute("unneeded");
   }
 
-  // XXX Not sure if this is still needed...
-  if(bugButton.getAttribute("autoclick") == "true") {
-    bugButton.removeAttribute("autoclick");
-  }
-
-  clearTable();
-
   requestCount = 2;
 
   d = new Date();
   epoch = d.getTime();
 
-  var stateObj = { };
-  var url = "?milestone=" + selectedMilestone + "&patches=" + patches + "&resolved=" + resolved;
-  history.pushState(stateObj, "Jetpack Bug Dashboard", url);
+  // XXX Not sure if this is still needed...
+  if(bugButton.getAttribute("autoclick") == "true") {
+    bugButton.removeAttribute("autoclick");
+  } else {
+    clearTable();
 
-  state.milestone = selectedMilestone;
-  state.resolved = resolved;
-  state.patches = patches;
+    var url = "?milestone=" + selectedMilestone + "&patches=" + patches + "&resolved=" + resolved;
+
+    if(user.length > 0) {
+      url = url += "&user=" + user;
+    }
+
+    history.pushState({}, "Jetpack Bug Dashboard", url);
+
+    state.milestone = selectedMilestone;
+    state.resolved = resolved;
+    state.patches = patches;
+  }
 
   getBreakdown(selectedMilestone, resolved);
-  getBugs(selectedMilestone, resolved, patches);
+  getBugs(selectedMilestone, resolved, patches, user);
 
   document.body.removeAttribute("initial");
   document.body.setAttribute("activeRequests", "true");
@@ -229,6 +237,10 @@ milestoneRequest.onreadystatechange = function(aEvt) {
           evt.initEvent("change",false,false);
           componentFilter.dispatchEvent(evt);
         }
+        if(pair[0] == "user" && pair[1]) {
+          pair[1] = pair[1].toLowerCase();
+          document.getElementById("userFilterText").value = pair[1];
+        }
       }
 
       // If there were search parameters present, auto-fire the search
@@ -287,6 +299,7 @@ function clearTable() {
   document.getElementById("bugdiv").setAttribute("notloaded", "true");
   document.getElementById("breakdown").setAttribute("notloaded", "true");
   document.getElementById("patches").setAttribute("notloaded", "true");
+  document.getElementById("noPatches").setAttribute("notloaded", "true");
 
   document.getElementById("bugtable").getElementsByTagName("tbody")[0].innerHTML = "";
   document.getElementById("breakdown").innerHTML = "<h3>Bug Breakdown</h3>" +
@@ -359,7 +372,7 @@ function getBreakdown(milestone, resolved) {
           //history.replaceState({"bug":"none"}, "Jetpack Bug Dashboard", window.location);
         }
       } else {
-        //alert(request.status);
+        alert("Something with the request went wrong. Request status: " + request.status);
       }
     }
   };
@@ -368,11 +381,11 @@ function getBreakdown(milestone, resolved) {
 
 
 
-function getBugs(milestone, resolved, patches) {
+function getBugs(milestone, resolved, patches, user) {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/" +
     "bug?product=Add-on%20SDK&&MILESTONE&&&&RESOLUTION&&&include_fields=" +
     "id,summary,assigned_to,creation_time,last_change_time," +
-    "resolution,status,target_milestone,whiteboard,severity,component";
+    "resolution,status,target_milestone,whiteboard,severity,component,creator"
 
   if(milestone == "All") {
     someURL = someURL.replace("&&MILESTONE&&", ""); 
@@ -389,7 +402,15 @@ function getBugs(milestone, resolved, patches) {
   if(!resolved) {
     someURL = someURL + "&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED"
   }
-  
+
+  if(user.length > 0) {
+/*
+    someURL = someURL + "&email1=" + user +
+      "&email1_type=equals_any" +
+      "&email1_assigned_to=1&email1_qa_contact=1&email1_creator=1";
+*/
+  }
+
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
   request.setRequestHeader("Accept", "application/json");
@@ -399,7 +420,7 @@ function getBugs(milestone, resolved, patches) {
       if(request.status == 200) {
         requestCount = requestCount - 1;
         state.bugs = JSON.parse(request.response);
-        bugs(JSON.parse(request.response), milestone);
+        bugs(JSON.parse(request.response), milestone, user);
         if(requestCount == 0) {
           document.body.removeAttribute("activeRequests");
           history.replaceState(state, "Jetpack Bug Dashboard", window.location);
@@ -407,7 +428,7 @@ function getBugs(milestone, resolved, patches) {
         }
         
       } else {
-        //alert(request.status);
+        alert("Something with the request went wrong. Request status: " + request.status);
       }
     }
   };
@@ -494,8 +515,51 @@ function breakdownFixed(data) {
 
 // These are the incoming bugs from the main addon script
 //self.port.on("bugs", function(incoming) {
-function bugs(incoming, milestone) {
+function bugs(incoming, milestone, user) {
     var bugs = incoming["bugs"];
+    var newBugs = [];
+
+    // if a user was requested, filter bugs so only this user's bugs are shown
+    if(user.length > 0) {
+      var userPresent = false;
+      for(i=0;i<bugs.length;i++) {
+        userPresent = false;
+
+        if(user.split("@")[0] == bugs[i].creator.name.split("@")[0]) {
+          userPresent = true;
+        }
+        if(user.split("@")[0] == bugs[i].assigned_to.name.split("@")[0]) {
+          userPresent = true;
+        }
+        if(bugs[i].attachments) {
+          for(j=0;j<bugs[i].attachments.length;j++) {
+            if(user.split("@")[0] == bugs[i].attachments[j].attacher.name.split("@")[0]) {
+              userPresent = true;
+            }
+            if(bugs[i].attachments[j].flags) {
+              for(k=0;k<bugs[i].attachments[j].flags.length;k++) {
+                if(bugs[i].attachments[j].flags[k].setter) {
+                  if(user.split("@")[0] == bugs[i].attachments[j].flags[k].setter.name.split("@")[0]) {
+                    userPresent = true;
+                  }
+                }
+                if(bugs[i].attachments[j].flags[k].requestee) {
+                  if(user.split("@")[0] == bugs[i].attachments[j].flags[k].requestee.name.split("@")[0]) {
+                    userPresent = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+        if(userPresent) {
+          newBugs.push(bugs[i]);
+        }
+      }
+    }
+    if(newBugs.length > 0) {
+      bugs = newBugs;
+    }
 
     // Use d3.js to add a row for each bug automagically, assigning attributes
     // as it goes through each bug. (trs is a d3-specific reference to the rows)
@@ -545,14 +609,23 @@ function bugs(incoming, milestone) {
                             .getElementsByTagName("tr");
     var patchCounts = [totalPatches, pendingReviews, reviewminus, 
                        reviewplus, pendingFeedback, feedbackminus, feedbackplus]; 
+    var patchTotal=0;
 
-    for(i=0;i<patchrows.length; i++) {
-      patchrows[i].lastElementChild.innerHTML = patchCounts[i];
-      if(patchCounts[i] == 0) {
-        patchrows[i].setAttribute("unneeded", "true");
-      }
+    for(i=0;i<patchCounts.length;i++) {
+      patchTotal = patchTotal + patchCounts[i];
     }
-    document.getElementById("patches").removeAttribute("notloaded");
+
+    if(patchTotal > 0) {
+      for(i=0;i<patchrows.length; i++) {
+        patchrows[i].lastElementChild.innerHTML = patchCounts[i];
+        if(patchCounts[i] == 0) {
+          patchrows[i].setAttribute("unneeded", "true");
+        }
+      }
+      document.getElementById("patches").removeAttribute("notloaded");
+    } else {
+      document.getElementById("noPatches").removeAttribute("notloaded");
+    }
 
     return bugs;
 }
