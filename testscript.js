@@ -123,7 +123,9 @@ milestoneRequest.setRequestHeader("Content-Type", "application/json");
 milestoneRequest.onreadystatechange = function(aEvt) {
   if(milestoneRequest.readyState == 4) {
     if(milestoneRequest.status == 200) {
+    try {
       var sdkinfo = JSON.parse(milestoneRequest.response).product["Add-on SDK"];
+    } catch(e) { sdkinfo = JSON.parse(milestoneRequest.responseText).product["Add-on SDK"]; }
 
       // Set the milestone dropdown
       var sdkmilestones = sdkinfo.target_milestone;
