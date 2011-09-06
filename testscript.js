@@ -7,7 +7,8 @@ var state = {
   "bugs":null, 
   "milestone":null,
   "resolved":null,
-  "patches":null
+  "patches":null,
+  "user":null
 };
 
 // Bug stat counters
@@ -50,8 +51,8 @@ window.onpopstate = function(event) {
 
 // Set the form from the state and bring back the bug/breakdown tables
 function restoreState(thisState) {
-  fetchUnresolved.checked = resolved;
-  fetchPatches.checked = patches;
+  fetchUnresolved.checked = thisState.resolved;
+  fetchPatches.checked = thisState.patches;
 
   thisState.milestone = thisState.milestone.toLowerCase();
   var milestoneOptions = milestoneSelect.getElementsByTagName("option");
@@ -62,10 +63,12 @@ function restoreState(thisState) {
     } 
   }
 
+  userFilter.value = thisState.user;
+
   clearTable();
 
   breakdownFixed(thisState.breakdown);
-  bugs(thisState.bugs, thisState.milestone);
+  bugs(thisState.bugs, thisState.milestone, thisState.patches, thisState.user);
 }
 
 var bugButton = document.getElementById("getBugs");
@@ -115,6 +118,7 @@ bugButton.addEventListener("click", function() {
     state.milestone = selectedMilestone;
     state.resolved = resolved;
     state.patches = patches;
+    state.user = user;
   }
 
   getBreakdown(selectedMilestone, resolved);
