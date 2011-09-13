@@ -245,6 +245,12 @@ body[activeRequests] #getBugs, body:not([activeRequests]) #gettingBugsText {
 body[activeRequests] #gettingBugsText, body:not([activeRequests]) #getBugs {
   display:inline;
 }
+body[activeRequests] #gettingBugsText p {
+  margin-top:-2px;
+}
+body:not([activeRequests]) #fasttext {
+  padding-top:44px;
+}
 div {
   text-align:center;
 }
