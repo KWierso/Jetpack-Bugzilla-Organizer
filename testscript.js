@@ -252,6 +252,7 @@ milestoneRequest.onreadystatechange = function(aEvt) {
         bugButton.setAttribute("autoclick", "true");
         bugButton.click();
       }
+      document.getElementById("initialFetch").setAttribute("notloaded", "true");
       document.getElementById("mileForm").removeAttribute("notloaded");
     }
   }
