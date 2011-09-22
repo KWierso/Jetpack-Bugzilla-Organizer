@@ -1,0 +1,315 @@
+div.filterparent > p {
+    padding: 5px;
+    margin: 7px;
+    min-height:25px;
+}
+div.filterparent > p  *{
+    vertical-align:middle;
+}
+div.filterparent > p:not(:last-child) {
+    border:1px dashed #000000;
+    float:left;
+}
+#zarroBoogs {
+  clear:both;
+  float:left;
+}
+#resetFilter {
+    float:right;
+}
+
+*[unneeded] {
+  display:none;
+}
+*[notloaded] {
+  display:none;
+}
+
+#bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
+    display:none;
+}
+#bugtable:not([invert])[filterFixed] tbody tr[isfixed=true] {
+    display:none;
+}
+
+#bugtable:not([invert])[filterComponent=General] tbody tr:not([component=General]) {
+    display:none;
+}
+#bugtable:not([invert])[filterComponent=Documentation] tbody tr:not([component=Documentation]) {
+    display:none;
+}
+
+#bugtable:not([invert])[filterAge="New"] tbody tr:not([bugAge="New"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterAge="Month"] tbody tr:not([bugAge="Month"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterAge="2Month"] tbody tr:not([bugAge="2Month"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterAge="3PlusMonth"] tbody tr:not([bugAge="3PlusMonth"]) {
+    display:none;
+}
+
+#bugtable:not([invert])[filterActivity="New"] tbody tr:not([bugActivity="New"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterActivity="Month"] tbody tr:not([bugActivity="Month"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterActivity="2Month"] tbody tr:not([bugActivity="2Month"]) {
+    display:none;
+}
+#bugtable:not([invert])[filterActivity="3PlusMonth"] tbody tr:not([bugActivity="3PlusMonth"]) {
+    display:none;
+}
+
+#bugtable[invert][filterPatch] tbody tr[hasCurrentPatch] {
+    display:none;
+}
+#bugtable[invert][filterFixed] tbody tr:not([isfixed=true]) {
+    display:none;
+}
+
+#bugtable[invert][filterComponent=General] tbody tr[component=General] {
+    display:none;
+}
+#bugtable[invert][filterComponent=Documentation] tbody tr[component=Documentation] {
+    display:none;
+}
+
+#bugtable[invert][filterAge="New"] tbody tr[bugAge="New"] {
+    display:none;
+}
+#bugtable[invert][filterAge="Month"] tbody tr[bugAge="Month"] {
+    display:none;
+}
+#bugtable[invert][filterAge="2Month"] tbody tr[bugAge="2Month"] {
+    display:none;
+}
+#bugtable[invert][filterAge="3PlusMonth"] tbody tr[bugAge="3PlusMonth"] {
+    display:none;
+}
+
+#bugtable[invert][filterActivity="New"] tbody tr[bugActivity="New"] {
+    display:none;
+}
+#bugtable[invert][filterActivity="Month"] tbody tr[bugActivity="Month"] {
+    display:none;
+}
+#bugtable[invert][filterActivity="2Month"] tbody tr[bugActivity="2Month"] {
+    display:none;
+}
+#bugtable[invert][filterActivity="3PlusMonth"] tbody tr[bugActivity="3PlusMonth"] {
+    display:none;
+}
+
+
+
+#bugtable td:nth-child(1) {
+    width:100px !important;
+    max-width:100px !important;
+}
+#bugtable td:nth-child(2) {
+    width:150px !important;
+    max-width:150px !important;
+}
+#bugtable td:nth-child(3) {
+    width:300px !important;
+    max-width:300px !important;
+}
+#bugtable td:nth-child(4) {
+    width:200px !important;
+    max-width:200px !important;
+}
+#bugtable td:nth-child(5) {
+    width:200px !important;
+    max-width:200px !important;
+}
+#bugtable td:nth-child(6) {
+    width:100px !important;
+    max-width:100px !important;
+}
+#bugtable td:nth-child(7) {
+    width:100px !important;
+    max-width:100px !important;
+}
+#bugtable td:nth-child(8) {
+    max-width:300px !important;
+}
+
+td {
+  border: 1px solid black !important;
+}
+*:not(thead) > tr:hover {
+  background: grey;
+}
+tr[triage=yes] {
+  font-style:italic;
+}
+tr[severity=critical] {
+  color: red;
+}
+tr[severity=enhancement] {
+  color: grey;
+}
+tr[severity=enhancement]:hover {
+  color: black;
+}
+body > div {
+    margin: 10px !important;
+}
+#milestone {
+    border:1px solid black;
+}
+#patches {
+    float:left;
+    border:1px solid black;
+}
+#noPatches {
+    float:left;
+    border:1px solid black;
+}
+#bugdiv {
+    clear:both;
+    float:left;
+    border:1px solid black;
+}
+
+#mileForm {
+    float:left;
+    margin-left: auto;
+    margin-right: auto;
+    border:1px solid black;
+    width:500px;
+}
+#breakdown {
+    min-width:600px;
+    float: left;
+    border:1px solid black;
+}
+#breakdown td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
+  font-weight:bold;
+  border:1px dashed!important;
+}
+#breakdown th {
+  border:1px dashed!important;
+}
+#breakdown table {
+  float:left;
+}
+#pie {
+  float:left;
+}
+#milestone td, #patches td {
+    min-width: 50px;
+    text-align: center;
+}
+
+th[sorted] {
+    text-decoration: underline;
+}
+th[sorted] img {
+    -moz-transform: scale(0.5);
+}
+th:not([sorted]) img {
+    display:none!important;
+}
+
+th[sorted=up] img {
+    -moz-transform: scale(0.5) rotate(180deg);
+}
+
+#bugtable {
+    clear: both;
+}
+
+option.obsolete {
+    color:grey;
+}
+
+#milestoneSelect * {
+    min-width: 50px !important;
+}
+#componentFilter * {
+    min-width: 100px !important;
+}
+
+body[initial] :not(#mileForm) *{
+  opacity: 0.1;
+}
+option {
+  opacity: 1!important;
+}
+body[activeRequests] #getBugs, body:not([activeRequests]) #gettingBugsText {
+  display:none;
+}
+body[activeRequests] #gettingBugsText, body:not([activeRequests]) #getBugs {
+  display:inline;
+}
+body[activeRequests] #gettingBugsText p {
+  margin-top:-2px;
+}
+body:not([activeRequests]) #fasttext {
+  padding-top:44px;
+}
+div {
+  text-align:center;
+}
+#bugtable td:nth-child(6), #bugtable td:nth-child(7) {
+  max-width: 90px!important;
+  width: 90px!important;
+  text-align:center;
+}
+#bugtable td:nth-child(4), #bugtable td:nth-child(5) {
+  max-width: 90px!important;
+  width: 90px!important;
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  text-align:center;
+}
+#bugtable td:nth-child(3) {
+  max-width: 300px!important;
+  width: 300px!important;
+}
+#bugtable td:nth-child(2) {
+  max-width: 70px!important;
+  width: 70px!important;
+  text-align:center;
+}
+#bugtable td:nth-child(1) {
+  max-width: 70px!important;
+  width: 70px!important;
+  text-align:center;
+}
+
+
+#bugtable th:nth-child(6), #bugtable th:nth-child(7) {
+  max-width: 90px!important;
+  width: 90px!important;
+  text-align:center;
+}
+#bugtable th:nth-child(4), #bugtable th:nth-child(5) {
+  max-width: 90px!important;
+  width: 90px!important;
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  text-align:center;
+}
+#bugtable th:nth-child(3) {
+  max-width: 300px!important;
+  width: 300px!important;
+}
+#bugtable th:nth-child(2) {
+  max-width: 70px!important;
+  width: 70px!important;
+  text-align:center;
+}
+#bugtable th:nth-child(1) {
+  max-width: 70px!important;
+  width: 70px!important;
+  text-align:center;
+}
