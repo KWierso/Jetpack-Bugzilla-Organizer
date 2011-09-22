@@ -1,8 +1,8 @@
 <html>
     <head>
         <title>Jetpack Bug Dashboard</title>
-        <script type="text/javascript" src="d3.js"></script>
-        <script type="text/javascript" src="d3.layout.js"></script>
+        <script type="text/javascript" src="../resources/d3.js"></script>
+        <script type="text/javascript" src="../resources/d3.layout.js"></script>
         <script type="text/javascript" src="sortlibrary.js"></script>
         <script type="text/javascript" src="testscript.js" defer></script>
         <link href="dashboard.css" type="text/css" rel="stylesheet" />
@@ -11,7 +11,7 @@
     <body initial="true">
         <div id="initialFetch">
             <h3>Fetching bug metadata, please wait</h3>
-            <img src="rotate.gif"/>
+            <img src="../resources/rotate.gif"/>
         </div>
         <div notloaded="true" id="mileForm">
             <h3>Pick your data:</h3>
@@ -31,7 +31,7 @@
             <input id="getBugs" value="Get Bugs" type="button"/>
             <span id="gettingBugsText">
               <p>Getting your bugs!</p>
-              <img src="rotate.gif"/>
+              <img src="../resources/rotate.gif"/>
             </span>
             <br/><br/>
             <p id="fasttext">* Uncheck these for faster searches</p>
