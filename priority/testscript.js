@@ -327,6 +327,10 @@ function clearTable() {
     "patches":null
   };
 
+  document.getElementById("pie").removeAttribute("selectedStatus");
+  document.getElementById("breakdownTable").removeAttribute("selectedStatus");
+  document.getElementById("bugTable").removeAttribute("filterStatus");
+
   document.getElementById("bugdiv").setAttribute("notloaded", "true");
   document.getElementById("breakdown").setAttribute("notloaded", "true");
   document.getElementById("patches").setAttribute("notloaded", "true");
@@ -411,6 +415,7 @@ function getBreakdown(milestone, resolved, priority) {
         }
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
       }
     }
   };
@@ -425,7 +430,7 @@ function getBugs(milestone, resolved, patches, user, priority) {
     "id,summary,assigned_to,creation_time,last_change_time," +
     "resolution,status,target_milestone,whiteboard,severity,component,creator"
 
-  if(milestone == "All") {
+  if(milestone == "All" || milestone == "---") {
     someURL = someURL.replace("&&MILESTONE&&", ""); 
     someURL = someURL.replace("&&RESOLUTION&&", "&resolution=---"); 
   } else {
@@ -473,6 +478,7 @@ function getBugs(milestone, resolved, patches, user, priority) {
         
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
       }
     }
   };
@@ -553,7 +559,7 @@ function breakdownFixed(data) {
           milestone.push(thisSum);
         }
       }
-      pie(milestone);
+      pie(milestone, yHeads);
       document.getElementById("breakdown").removeAttribute("notloaded");
     }
 
@@ -1073,11 +1079,15 @@ document.getElementById("resetFilter")
             bugtable.removeAttribute("filterAge");
             bugtable.removeAttribute("filterActivity");
 
+            document.getElementById("pie").removeAttribute("selectedStatus");
+            document.getElementById("breakdownTable").removeAttribute("selectedStatus");
+            document.getElementById("bugtable").removeAttribute("filterStatus");
+
             adjustGraph();
         },false);
 
 // Function to draw a pie chart from the given data set
-function pie(data) {
+function pie(data, status) {
     var w = 300,
     h = 300,
     r = Math.min(w, h) / 2,
@@ -1117,6 +1127,47 @@ function pie(data) {
     for(var i=0;i<tablerows.length;i++) {
         tablerows[i].style.background = paths[i].getAttribute("fill");
     }
+
+    var pieArcs = document.getElementById("pie").getElementsByTagName("g");
+    for(var i=0;i<pieArcs.length;i++) {
+      pieArcs[i].setAttribute("status", status[i]);
+      pieArcs[i].addEventListener("click", function(e) {
+        pieClick(e.originalTarget);
+      }, false);
+    }
+}
+
+// Click handler for the pie chart
+function pieClick(tgt) {
+    while(tgt.nodeName != "g") {
+      tgt = tgt.parentNode;
+    }
+
+    var pie = tgt.parentNode;
+    pie.setAttribute("selectedStatus", "true");
+
+    var arcIndex;
+
+    var arcs = pie.getElementsByTagName("g");
+    for(var i=0;i<arcs.length;i++) {
+      arcs[i].removeAttribute("selectedStatus");
+      if(arcs[i]==tgt) {
+        arcIndex = i;
+      }
+    }
+    var stat = tgt.getAttribute("status");
+    tgt.setAttribute("selectedStatus", "true");
+
+    var bdTable = document.getElementById("breakdownTable");
+    var bdTableRows = bdTable.getElementsByTagName("tr");
+    bdTable.setAttribute("selectedStatus", "true");
+    for(var i=0;i<bdTableRows.length;i++) {
+      bdTableRows[i].removeAttribute("selectedStatus");
+    }
+    bdTableRows[arcIndex].setAttribute("selectedStatus", "true");
+
+    var bugtable = document.getElementById("bugtable");
+    bugtable.setAttribute("filterStatus", stat);
 }
 
 /* //XXX NOT USED (But maybe useful later?)

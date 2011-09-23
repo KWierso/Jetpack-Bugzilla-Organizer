@@ -25,6 +25,28 @@ div.filterparent > p:not(:last-child) {
   display:none;
 }
 
+#bugtable[filterStatus=UNCONFIRMED] tbody tr:not([status~=UNCONFIRMED]) {
+    display:none;
+}
+#bugtable[filterStatus=NEW] tbody tr:not([status~=NEW]) {
+    display:none;
+}
+#bugtable[filterStatus=ASSIGNED] tbody tr:not([status~=ASSIGNED]) {
+    display:none;
+}
+#bugtable[filterStatus=REOPENED] tbody tr:not([status~=REOPENED]) {
+    display:none;
+}
+#bugtable[filterStatus=RESOLVED] tbody tr:not([status~=RESOLVED]) {
+    display:none;
+}
+#bugtable[filterStatus=VERIFIED] tbody tr:not([status~=VERIFIED]) {
+    display:none;
+}
+#bugtable[filterStatus=CLOSED] tbody tr:not([status~=CLOSED]) {
+    display:none;
+}
+
 #bugtable:not([invert])[filterPatch] tbody tr:not([hasCurrentPatch]) {
     display:none;
 }
@@ -199,9 +221,17 @@ body > div {
 #breakdown table {
   float:left;
 }
+
 #pie {
   float:left;
 }
+#pie[selectedStatus] g:not([selectedStatus]) {
+  opacity:0.3;
+}
+#breakdownTable[selectedStatus] tr:not([selectedStatus]) {
+  opacity:0.3;
+}
+
 #milestone td, #patches td {
     min-width: 50px;
     text-align: center;
