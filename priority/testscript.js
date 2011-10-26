@@ -327,9 +327,7 @@ function clearTable() {
     "patches":null
   };
 
-  document.getElementById("pie").removeAttribute("selectedStatus");
   document.getElementById("breakdownTable").removeAttribute("selectedStatus");
-  document.getElementById("bugTable").removeAttribute("filterStatus");
 
   document.getElementById("bugdiv").setAttribute("notloaded", "true");
   document.getElementById("breakdown").setAttribute("notloaded", "true");
