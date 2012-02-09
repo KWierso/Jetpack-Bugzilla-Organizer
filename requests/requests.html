@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <style>
+      .bug, #throbber {
+        border: 1em groove black;
+        border-radius: 2em;
+        padding: 15px;
+        margin: 15px;
+      }
+
+      .header {
+        font-weight:bold;
+      }
+
+      p {
+        padding-left: 25px;
+        font-weight: normal!important;
+      }
+      
+     
+      body {
+        margin:0px;
+      }
+      #throbber1 {
+        color: black;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 0px;
+        width: 100%;
+        height: 1px;
+        overflow: visible;
+        visibility: visible;
+        display: block
+      }
+      #throbber1 span {
+        position: absolute;
+        left: 50%;
+        width: 300px; /* Overall width of div */
+        height: 70px; /* Overall height of div */
+        top: -35px; /* half of the overall height */
+        margin-left: -150px; /* half of the overall width */
+        visibility: visible
+      }
+      
+       #throbber {
+        height: 90% !important;
+      }
+      
+      #content:not([displayed]) {
+        display:none;
+      }
+      
+    </style>
+    <script src="requests.js"></script>
+  </head>
+  <body onload="onload()">
+    
+    <div id="content"><h1> Flag report:</h1></div>
+    <div id="throbber">
+      <div id="throbber1">
+        <span>
+          <p> Fetching your bugs (this can take a while)</p>
+          <img src="throbber.gif"\>
+        </span>
+      </div>
+    </div>
+  </body>
+</html>
