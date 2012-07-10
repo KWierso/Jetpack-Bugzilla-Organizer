@@ -533,6 +533,8 @@ function breakdownFixed(data) {
           var bugtable = document.getElementById("bugtable");
           bugtable.setAttribute("filtermilestone", evt.target.innerHTML);
           bugtable.removeAttribute("filterstatus");
+          document.getElementById("breakdownTable").removeAttribute("selectedstatus");
+          document.getElementById("pie").removeAttribute("selectedstatus");
         }, false);
         
         head.appendChild(header);
