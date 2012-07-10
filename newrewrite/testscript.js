@@ -535,6 +535,8 @@ function breakdownFixed(data) {
           bugtable.removeAttribute("filterstatus");
           document.getElementById("breakdownTable").removeAttribute("selectedstatus");
           document.getElementById("pie").removeAttribute("selectedstatus");
+          document.getElementById("breakdownTable").removeAttribute("selectedStatus");
+          document.getElementById("pie").removeAttribute("selectedStatus");
         }, false);
         
         head.appendChild(header);
@@ -558,7 +560,7 @@ function breakdownFixed(data) {
                 var evt = document.createEvent("MouseEvents");
                 evt.initMouseEvent("click", true, true, window,
                 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                arcs[i].dispatchEvent(evt);s
+                arcs[i].dispatchEvent(evt);
             }
           }
         }, false);
@@ -1196,6 +1198,7 @@ function pieClick(tgt) {
 
     var bugtable = document.getElementById("bugtable");
     bugtable.setAttribute("filterStatus", stat);
+    bugtable.removeAttribute("filtermilestone");
 }
 
 /* //XXX NOT USED (But maybe useful later?)
