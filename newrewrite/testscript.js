@@ -84,6 +84,7 @@ function restoreState(thisState) {
 
 var bugButton = document.getElementById("getBugs");
 bugButton.addEventListener("click", function() {
+  document.getElementById("resetFilter").click();
   var selectedMilestone = milestoneSelect.item(milestoneSelect.selectedIndex).innerHTML;
   var selectedPriority = prioritySelect.item(prioritySelect.selectedIndex).innerHTML;
 
