@@ -1,91 +1,26 @@
+<!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
         <title>Jetpack Bug Dashboard</title>
         <script type="text/javascript" src="../resources/d3.js"></script>
         <script type="text/javascript" src="../resources/d3.layout.js"></script>
         <script type="text/javascript" src="sortlibrary.js"></script>
-        <script type="text/javascript" src="testscript.js" defer></script>
+        <script type="text/javascript;version=1.8" src="testscript.js" defer ></script>
         <link href="dashboard.css" type="text/css" rel="stylesheet" />
     </head>
-    
     <body initial="true">
         <div id="initialFetch">
-            <h3>Fetching bug metadata, please wait</h3>
+            <h3>Fetching bug data, please wait</h3>
             <img src="../resources/rotate.gif"/>
         </div>
-        <div notloaded="true" id="mileForm">
-            <h3>Pick your data:</h3>
-            Milestone: 
-            <select id="milestoneSelect">
-              <option>All</option>
-            </select>
-            <br/>
-            Priority: 
-            <select id="prioritySelect">
-              <option>All</option>
-              <option>--</option>
-              <option>P1</option>
-              <option>P2</option>
-              <option>P3</option>
-              <option>P4</option>
-              <option>P5</option>
-            </select>
-            <br>
-            <input id="fetchUnresolved" checked="true" type="checkbox"/>Include resolved bugs *
-            <br/>
-            <input id="fetchPatches" checked="true" type="checkbox"/>Include patch info *
-            <br/>
-            <label>Bugs involving this email: </label>
-            <input id="userFilterText" type="textbox" placeholder="someone@example.com"/>
-
-            <br/><br/>
-            <input id="getBugs" value="Get Bugs" type="button"/>
-            <span id="gettingBugsText">
-              <p>Getting your bugs!</p>
-              <img src="../resources/rotate.gif"/>
-            </span>
-            <br/><br/>
-            <p id="fasttext">* Uncheck these for faster searches</p>
-        </div>
-        <div notloaded="true" id="noPatches">
-          <p>No patches meet the search criteria</p>
-        </div>
-        <div notloaded="true" id="patches">
-            <h3>Patch statistics <br/>(for open bugs)</h3>
-            <table>
-              <tr>
-                <td>Total Patches</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Pending Review</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Review denied</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Review granted</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Pending Feedback</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Feedback denied</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Feedback granted</td>
-                <td></td>
-              </tr>
-            </table>
-        </div>
-        <div id="zarroBoogs" unneeded="true">
-          <h3>Zero bugs found!</h3>
-          <p>You're free! Go out and enjoy life! (Or search for something else...)</p>
+        
+        <div id="assigneeCounts">
+          <h3>Bugs by assignee:</h3>
+          <table>
+            <thead></thead>
+            <tbody></tbody>
+          </table>
         </div>
         <div notloaded="true" id="breakdown">
             <h3>Bug Breakdown</h3>
@@ -94,71 +29,7 @@
               <tbody></tbody>
             </table>
         </div>
-        <div notloaded="true" id="bugdiv">
-            <div class="filterparent">
-              <p class="center">
-                <input id="fixedFilter" type="checkbox"/>
-                <label>Hide Fixed Bugs</label>
-              </p>
-              <p class="center">
-                <input id="patchFilter" type="checkbox"/>
-                <label>Hide Bugs without Patches</label>
-              </p>
-              <p class="center">
-                <select id="componentFilter">
-                  <option value="All">All</option>
-                  <!-- <option value="General">General</option>
-                  <option value="Documentation">Documentation</option> -->
-                </select>
-                <label>Filter by Component</label>
-              </p>
-              <div style="clear:both;"></div>
-              <p>
-                <select id="ageFilter" >
-                  <option value="All" title="All bugs, regardless of file date">All</option>
-                  <option value="New" title="Bugs filed in the last week">Last week</option>
-                  <option value="Month" title="Bugs filed in the last month, but more than a week ago">Last month</option>
-                  <option value="2Month" title="Bugs filed 1-2 months ago">2 Months Ago</option>
-                  <option value="3PlusMonth" title="Bugs filed more than two months ago">3+ Months Ago</option>
-                </select>
-                <label>Filter by Filed Date</label>
-              </p>
-              <p>
-                <select id="activityFilter" >
-                  <option value="All" title="All bugs, regardless of modified date">All</option>
-                  <option value="New" title="Bugs modified in the last week">Last week</option>
-                  <option value="Month" title="Bugs modified in the last month, but more than a week ago">Last month</option>
-                  <option value="2Month" title="Bugs modified 1-2 months ago">2 Months Ago</option>
-                  <option value="3PlusMonth" title="Bugs modified more than two months ago">3+ Months Ago</option>
-                </select>
-                <label>Filter by Modified Date</label>
-              </p>
-              <div style="clear:both;"></div>
-              <p>
-                <input id="invertFilter" type="checkbox"/>
-                <label>Invert Filters</label>
-              </p>
-              <p>
-                <input id="resetFilter" type="button" value="Reset Filters"/>
-              </p>
-            </div>
-            <table id="bugtable">
-              <thead>
-                <tr>
-                    <th id="sortIDs">ID <img/></th>
-                    <th id="sortMilestones">Mstone <img/></th>
-                    <th id="sortSummary">Summary <img/></th>
-                    <th id="sortAssignee">Assignee <img/></th>
-                    <th id="sortStatus">Status <img/></th>
-                    <th id="sortCreated">Created <img/></th>
-                    <th id="sortModified">Modified <img/></th>
-                    <th id="sortPatches">Patches <img/></th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-        </div>
-        <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
         
+        <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
     </body>
 </html>
