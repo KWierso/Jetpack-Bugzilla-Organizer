@@ -209,8 +209,7 @@ function assigneeBreakdownFixed(data) {
       var cell = document.createElement("td");
       cell.innerHTML = totals;
       if(totals > 0) {
-        cell.setAttribute("style", "background: " + color(i) + ";");
-        tablerows[i].firstChild.setAttribute("style", "background: " + color(i) + ";");
+        tablerows[i].setAttribute("style", "background: " + color(i) + ";");
       }
       tablerows[i].appendChild(cell);
       
