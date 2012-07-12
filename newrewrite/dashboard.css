@@ -269,6 +269,14 @@ body > div {
   float:left;
 }
 
+#priority table {
+  padding-top:35px!important;
+}
+
+#breakdown table {
+  padding-top:60px!important;
+}
+
 #piemilestone, #piepriority {
   float:right;
 }

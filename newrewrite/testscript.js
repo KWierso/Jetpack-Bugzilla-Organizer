@@ -477,8 +477,10 @@ function pie(data, status, target) {
 
     if(target == "milestone") {
       myTarget = "#breakdown";
+      color = d3.scale.category20();
     } else if(target == "priority") {
       myTarget = "#priority";
+      color = d3.scale.category10();
     }
     var vis = d3.select(myTarget)
       .append("svg:svg")
