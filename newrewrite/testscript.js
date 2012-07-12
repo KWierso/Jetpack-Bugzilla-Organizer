@@ -124,7 +124,8 @@ function assigneeBreakdownFixed(data) {
 
       // Add the first column from the yHeads dataset
       var yHeader = document.createElement("td");
-      yHeader.innerHTML = yHeads[i] == "nobody" ? "UNASSIGNED" : yHeads[i];
+      yHeader.innerHTML = (yHeads[i] == "nobody" || 
+                           yHeads[i] == "nobody@mozilla.org") ? "UNASSIGNED" : yHeads[i];
       yHeader.className = "first";
       tablerows[i].appendChild(yHeader);
       yHeader.addEventListener("click", function(evt) {
@@ -159,7 +160,12 @@ function assigneeBreakdownFixed(data) {
       tablerows[i].addEventListener("click", function(evt) {
         let target = evt.target;
         let newtarget = target;
+        
+        let index;
         while(newtarget.tagName != "TR") {
+          if(newtarget.tagName == "TD") {
+            index = Array.prototype.indexOf.call(newtarget.parentNode.childNodes, newtarget);
+          } 
           newtarget = newtarget.parentNode;
         }
         let assignee = newtarget.getElementsByTagName("td")[0].innerHTML;
@@ -167,12 +173,30 @@ function assigneeBreakdownFixed(data) {
           assignee = "nobody";
         }
         
+        let statusstring = "bug_status=UNCONFIRMED;bug_status=NEW;" +
+              "bug_status=ASSIGNED;bug_status=REOPENED";
+        
         let bugSearchURL = "https://bugzilla.mozilla.org/buglist.cgi?" +
               "emailtype1=substring;emailassigned_to1=1;query_format=advanced;" +
-              "bug_status=UNCONFIRMED;bug_status=NEW;bug_status=ASSIGNED;" +
-              "bug_status=REOPENED;email1=&&ASSIGNEE&&;product=Add-on%20SDK";
+              "&&BUGSTATUS&&;product=Add-on%20SDK;email1=&&ASSIGNEE&&";
               
         bugSearchURL = bugSearchURL.replace("&&ASSIGNEE&&", assignee);
+        if(index == 0 || head.childNodes[index].innerHTML == "TOTAL") {
+          bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", statusstring);
+        } else if(head.childNodes[index].innerHTML == "UNCON") {
+          if(newtarget.childNodes[index].innerHTML == "") return;
+          bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", "bug_status=UNCONFIRMED");
+        } else if(head.childNodes[index].innerHTML == "NEW") {
+          if(newtarget.childNodes[index].innerHTML == "") return;
+          bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", "bug_status=NEW");
+        } else if(head.childNodes[index].innerHTML == "ASSIG") {
+          if(newtarget.childNodes[index].innerHTML == "") return;
+          bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", "bug_status=ASSIGNED");
+        } else if(head.childNodes[index].innerHTML == "REOPE") {
+          if(newtarget.childNodes[index].innerHTML == "") return;
+          bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", "bug_status=REOPENED");
+        }
+        
         window.open(bugSearchURL);
       }, false);
     }
