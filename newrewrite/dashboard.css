@@ -261,13 +261,31 @@ body > div {
   float:left;
 }
 
-#pie {
+#priority {
+    min-width:600px;
+    float: left;
+    border:1px solid black;
+}
+#priority td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
+  font-weight:bold;
+  border:1px dashed!important;
+}
+#priority th {
+  border:1px dashed!important;
+}
+#priority table {
   float:left;
 }
-#pie[selectedStatus] g:not([selectedStatus]) {
+
+#piemilestone, #piepriority {
+  float:left;
+}
+#piemilestone[selectedStatus] g:not([selectedStatus]),
+  #piepriority[selectedStatus] g:not([selectedStatus]) {
   opacity:0.3;
 }
-#breakdownTable[selectedStatus] tr:not([selectedStatus]) {
+#breakdownTable[selectedStatus] tr:not([selectedStatus]),
+  #priorityTable[selectedStatus] tr:not([selectedStatus]) {
   opacity:0.3;
 }
 
