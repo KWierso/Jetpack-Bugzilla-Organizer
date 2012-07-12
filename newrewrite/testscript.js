@@ -1,86 +1,41 @@
 var breakdowntrs;
+var authenticated = false;
 
-// Bug stat counters
-var unassigned = 0;
+window.setTimeout(waitForAddon, 1000, true); 
 
-getAssigneeBreakdown();
-getBreakdown();
+function waitForAddon() {
+  getAssigneeBreakdown();
+  getBreakdown();
 
-document.body.removeAttribute("initial");
-document.body.removeChild(document.getElementById("initialFetch"));
-
-
-
-function clearTable() {
-  // Reset counters
-  resolved = 0;
-  unassigned = 0;
-  totalPatches = 0;
-  pendingFeedback = 0;
-  pendingReviews = 0;
-  reviewminus = 0;
-  feedbackminus = 0;
-  reviewplus = 0;
-  feedbackplus = 0;
-
-  document.getElementById("breakdownTable").removeAttribute("selectedStatus");
-
-  document.getElementById("bugdiv").setAttribute("notloaded", "true");
-  document.getElementById("breakdown").setAttribute("notloaded", "true");
-  document.getElementById("patches").setAttribute("notloaded", "true");
-  document.getElementById("noPatches").setAttribute("notloaded", "true");
-  document.getElementById("zarroBoogs").setAttribute("unneeded", "true");
-
-  document.getElementById("bugtable").getElementsByTagName("tbody")[0].innerHTML = "";
-  document.getElementById("breakdown").innerHTML = "<h3>Bug Breakdown</h3>" +
-          "<table id='breakdownTable'><thead></thead><tbody></tbody></table>";
-
-  var patchRows = document.getElementById("patches").getElementsByTagName("tr");
-  for(i in patchRows) {
-    if(patchRows[i] == "[object HTMLTableRowElement]") {
-      patchRows[i].getElementsByTagName("td")[1].innerHTML = "";
-      patchRows[i].removeAttribute("unneeded");
-    }
-  }
-  var otherHeaders = document.getElementById("bugtable")
-                             .getElementsByTagName("th");
-  for(i in otherHeaders) {
-      if(otherHeaders[i].removeAttribute) {
-        otherHeaders[i].removeAttribute("sorted");
-      }
-  }
-
-  var inputs = document.getElementById("bugdiv")
-                       .getElementsByTagName("input");
-
-  for(i in inputs) {
-    if(inputs[i].type == "checkbox") {
-      inputs[i].checked = false;
-    }
-  }
-  componentFilter.selectedIndex = 0;
-  document.getElementById("ageFilter").selectedIndex = 0;
-  document.getElementById("activityFilter").selectedIndex = 0;
-
-  var bugtable = document.getElementById("bugtable");
-  bugtable.removeAttribute("filterPatch");
-  bugtable.removeAttribute("filterFixed");
-  bugtable.removeAttribute("filterComponent");
-  bugtable.removeAttribute("filterActivity");
-  bugtable.removeAttribute("filterAge");
-  bugtable.removeAttribute("invert");
+  document.body.removeAttribute("initial");
+  document.body.removeChild(document.getElementById("initialFetch"));
 }
 
-// initiate xhr to get breakdown data, pass it to d3.js
-function getAssigneeBreakdown(milestone, resolved, priority) {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=status&y_axis_field=assigned_to&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
 
+// initiate xhr to get breakdown data, pass it to d3.js
+function getAssigneeBreakdown() {
+  var cookie = document.getElementById("cookie");
+  var cookieLogin = cookie.getAttribute("login");
+  var cookieCookie = cookie.getAttribute("cookie");
+
+  if(cookieLogin && cookieCookie) {
+    var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?" +
+                  "product=Add-on%20SDK&x_axis_field=status&y_axis_field" +
+                  "=assigned_to&status=NEW&status=ASSIGNED&status=" +
+                  "UNCONFIRMED&status=REOPENED&userid=" + cookieLogin +
+                  "&cookie=" + cookieCookie;
+    authenticated = true;
+  } else {
+    var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?" +
+                  "product=Add-on%20SDK&x_axis_field=status&y_axis_field" +
+                  "=assigned_to&status=NEW&status=ASSIGNED&status=" +
+                  "UNCONFIRMED&status=REOPENED";
+  }
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
   request.setRequestHeader("Accept", "application/json");
   request.setRequestHeader("Content-Type", "application/json");
   request.onreadystatechange = function (aEvt) {
-  //for(i in request.response) {
     if (request.readyState == 4) {
       if(request.status == 200) {
         assigneeBreakdownFixed(JSON.parse(request.response));
@@ -98,19 +53,6 @@ function getAssigneeBreakdown(milestone, resolved, priority) {
 // initiate xhr to get breakdown data, pass it to d3.js
 function getBreakdown(milestone, resolved, priority) {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
-/*
-  if(milestone == "All") {
-    someURL = someURL.replace("&&MILESTONE&&", ""); 
-  } else {
-    someURL = someURL.replace("&&MILESTONE&&", "&target_milestone=" + milestone); 
-  }
-
-  if(priority == "All") {
-    someURL = someURL.replace("&&PRIORITY&&", "");
-  } else {
-    someURL = someURL.replace("&&PRIORITY&&", "&priority=" + priority);
-  }
-*/
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -343,10 +285,6 @@ function breakdownFixed(data) {
     }
 
     return data;
-}
-
-function adjustGraph() {
-  
 }
 
 // Function to draw a pie chart from the given data set

@@ -5,9 +5,15 @@
         <title>Jetpack Bug Dashboard</title>
         <script type="text/javascript" src="../resources/d3.js"></script>
         <script type="text/javascript" src="../resources/d3.layout.js"></script>
-        <script type="text/javascript" src="sortlibrary.js"></script>
         <script type="text/javascript;version=1.8" src="testscript.js" defer ></script>
         <link href="dashboard.css" type="text/css" rel="stylesheet" />
+        <script>
+          window.addEventListener("message", function(event) {
+            var type = event.data.split(":")[0];
+            var data = event.data.split(":")[0];
+//            var myElement = document.createElement(
+          }, false);
+        </script>
     </head>
     <body initial="true">
         <div id="initialFetch">
@@ -23,13 +29,14 @@
           </table>
         </div>
         <div notloaded="true" id="breakdown">
-            <h3>Bug Breakdown</h3>
+            <h3>Bugs by Milestone</h3>
             <table id="breakdownTable">
               <thead></thead>
               <tbody></tbody>
             </table>
         </div>
         
-        <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
+      <div id="cookie" style="display:none!important;"></div>
+      <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
     </body>
 </html>
