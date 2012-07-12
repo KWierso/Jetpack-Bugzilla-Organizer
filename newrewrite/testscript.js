@@ -51,7 +51,7 @@ function getAssigneeBreakdown() {
 
 
 // initiate xhr to get breakdown data, pass it to d3.js
-function getBreakdown(milestone, resolved, priority) {
+function getBreakdown() {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
 
   var request = new XMLHttpRequest();
@@ -178,6 +178,7 @@ function assigneeBreakdownFixed(data) {
     }
   }
 
+  document.getElementById("assigneeCounts").removeAttribute("notloaded");
   return data;
 }
 
@@ -211,7 +212,7 @@ function breakdownFixed(data) {
 
       // Put a blank th in the table for the empty top-left spot
       var mstoneheader = document.createElement("th");
-      mstoneheader.innerHTML = "Milestone"
+      mstoneheader.innerHTML = ""
       head.appendChild(mstoneheader);
 
       // Add a header element for each column in the table

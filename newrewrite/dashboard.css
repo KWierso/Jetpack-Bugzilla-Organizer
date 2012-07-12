@@ -292,7 +292,7 @@ option.obsolete {
     min-width: 100px !important;
 }
 
-body[initial] :not(#mileForm) *{
+body[initial] :not(#mileForm):not(#initialFetch) *{
   opacity: 0.1;
 }
 option {
