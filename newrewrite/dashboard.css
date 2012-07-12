@@ -217,7 +217,20 @@ body > div {
 #assigneeCounts > table {
   margin-left:auto;
   margin-right:auto;
+  width:700px!important;
 }
+
+#assigneeCounts > table  td:first-child {
+  width: 400px!important;
+  min-width: 400px!important;
+  overflow: hidden!important;
+}
+#assigneeCounts > table  td:not(:first-child) {
+  width: 70px!important;
+  min-width: 70px!important;
+  overflow: hidden!important;
+}
+
 #assigneeCounts td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
   font-weight:bold;
   border:1px dashed!important;

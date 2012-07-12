@@ -127,11 +127,12 @@ function assigneeBreakdownFixed(data) {
       yHeader.innerHTML = (yHeads[i] == "nobody" || 
                            yHeads[i] == "nobody@mozilla.org") ? "UNASSIGNED" : yHeads[i];
       yHeader.className = "first";
+      yHeader.setAttribute("email", yHeads[i]);
+      yHeader.setAttribute("title", yHeads[i]);
       tablerows[i].appendChild(yHeader);
-      yHeader.addEventListener("click", function(evt) {
-        var target = evt.target.innerHTML;
- 
-      }, false);
+      if(authenticated && yHeader.innerHTML != "UNASSIGNED") {
+        getUserName(yHeader, "https://api-dev.bugzilla.mozilla.org/latest/user/" + yHeads[i]);
+      }
 
       totals = 0;
       // For every item in the data set, create a row for the item
@@ -168,7 +169,7 @@ function assigneeBreakdownFixed(data) {
           } 
           newtarget = newtarget.parentNode;
         }
-        let assignee = newtarget.getElementsByTagName("td")[0].innerHTML;
+        let assignee = newtarget.getElementsByTagName("td")[0].getAttribute("email");
         if(assignee == "UNASSIGNED") {
           assignee = "nobody";
         }
@@ -206,6 +207,23 @@ function assigneeBreakdownFixed(data) {
   return data;
 }
 
+function getUserName(header, userURI) {
+  var request = new XMLHttpRequest();
+  request.open('GET', userURI, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+      if(request.status == 200) {
+        header.innerHTML = JSON.parse(request.response).real_name
+      } else {
+        alert("Something with the request went wrong. Request status: " + request.status);
+  
+      }
+    }
+  };
+  request.send(null);
+}
 
 
 // This is the incoming information for the bug breakdown by status and assignee
