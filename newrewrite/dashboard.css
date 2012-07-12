@@ -245,11 +245,6 @@ body > div {
   border:1px black;
 }
 
-#breakdown {
-    min-width:600px;
-    float: left;
-    border:1px solid black;
-}
 #breakdown td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
   font-weight:bold;
   border:1px dashed!important;
@@ -257,12 +252,9 @@ body > div {
 #breakdown th {
   border:1px dashed!important;
 }
-#breakdown table {
-  float:left;
-}
 
-#priority {
-    min-width:600px;
+#priority, #breakdown {
+    min-width:760px;
     float: left;
     border:1px solid black;
 }
@@ -273,12 +265,12 @@ body > div {
 #priority th {
   border:1px dashed!important;
 }
-#priority table {
+#priority table, #breakdown table {
   float:left;
 }
 
 #piemilestone, #piepriority {
-  float:left;
+  float:right;
 }
 #piemilestone[selectedStatus] g:not([selectedStatus]),
   #piepriority[selectedStatus] g:not([selectedStatus]) {
