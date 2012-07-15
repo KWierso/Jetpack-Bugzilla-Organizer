@@ -121,14 +121,14 @@ function assigneeBreakdownFixed(data) {
     // Add a header element for each column in the table
     // XXX TODO Add sorting? (It's all numbers, should be easy...)
     for(i in xHeads) {
-      let header = document.createElement("th");
+      var header = document.createElement("th");
       header.innerHTML = xHeads[i].substring(0,5);
       header.setAttribute("index", head.childNodes.length);
       head.appendChild(header);
     }
     
     // Add a header for totals
-    let header = document.createElement("th");
+    var header = document.createElement("th");
     header.innerHTML = "TOTAL";
     header.setAttribute("index", head.childNodes.length);
     head.appendChild(header);
@@ -178,25 +178,25 @@ function assigneeBreakdownFixed(data) {
       
       // Listen for clicks
       tablerows[i].addEventListener("click", function(evt) {
-        let target = evt.target;
-        let newtarget = target;
+        var target = evt.target;
+        var newtarget = target;
         
-        let index;
+        var index;
         while(newtarget.tagName != "TR") {
           if(newtarget.tagName == "TD") {
             index = Array.prototype.indexOf.call(newtarget.parentNode.childNodes, newtarget);
           } 
           newtarget = newtarget.parentNode;
         }
-        let assignee = newtarget.getElementsByTagName("td")[0].getAttribute("email");
+        var assignee = newtarget.getElementsByTagName("td")[0].getAttribute("email");
         if(assignee == "UNASSIGNED") {
           assignee = "nobody";
         }
         
-        let statusstring = "bug_status=UNCONFIRMED;bug_status=NEW;" +
+        var statusstring = "bug_status=UNCONFIRMED;bug_status=NEW;" +
               "bug_status=ASSIGNED;bug_status=REOPENED";
         
-        let bugSearchURL = "https://bugzilla.mozilla.org/buglist.cgi?" +
+        var bugSearchURL = "https://bugzilla.mozilla.org/buglist.cgi?" +
               "emailtype1=substring;emailassigned_to1=1;query_format=advanced;" +
               "&&BUGSTATUS&&;product=Add-on%20SDK;email1=&&ASSIGNEE&&";
               
