@@ -8,10 +8,12 @@
         <script type="text/javascript;version=1.8" src="testscript.js" defer="true" ></script>
         <link href="dashboard.css" type="text/css" rel="stylesheet" />
         <script>
-          window.addEventListener("message", function(event) {
-            var type = event.data.split(":")[0];
-            var data = event.data.split(":")[0];
+          try {
+            window.addEventListener("message", function(event) {
+              var type = event.data.split(":")[0];
+              var data = event.data.split(":")[0];
 //            var myElement = document.createElement(
+            } catch(e) {}
           }, false);
         </script>
     </head>
