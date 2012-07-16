@@ -4,6 +4,24 @@ body[triage=true] > #breakdown {
   display:none;
 }
 
+body[assignee=true] > #triageBreakdown,
+body[assignee=true] > #priority,
+body[assignee=true] > #breakdown {
+  display:none;
+}
+
+body[priority=true] > #triageBreakdown,
+body[priority=true] > #assigneeCounts,
+body[priority=true] > #breakdown {
+  display:none;
+}
+
+body[status=true] > #triageBreakdown,
+body[status=true] > #assigneeCounts,
+body[status=true] > #priority {
+  display:none;
+}
+
 *[unneeded] {
   display:none;
 }

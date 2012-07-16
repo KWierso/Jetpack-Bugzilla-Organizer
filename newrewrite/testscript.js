@@ -1,12 +1,28 @@
 var breakdowntrs;
 var authenticated = false;
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
+
 var query = window.location.search.substring(1);
-if(query == "triage") {
-  document.body.setAttribute("triage", "true");
-} else {
-  document.getElementById("triageBreakdown").setAttribute("showing", "false");
-}
+switch(query) {
+  case "triage":
+    document.body.setAttribute("triage", "true");
+    break;
+  
+  case "assignee":
+    document.body.setAttribute("assignee", "true");
+    break;
+
+  case "priority":
+    document.body.setAttribute("priority", "true");
+    break;
+
+  case "status":
+    document.body.setAttribute("status", "true");
+    break;
+    
+  default:
+    document.getElementById("triageBreakdown").setAttribute("showing", "false");  
+} 
 
 window.setTimeout(waitForAddon, 1000, true); 
 
