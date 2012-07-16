@@ -62,6 +62,7 @@ th {
     float: left;
     border:1px solid black;
 }
+
 #priority td.first, #milestone td:nth-child(1), #patches td:nth-child(1) {
   font-weight:bold;
   border:1px dashed!important;
@@ -180,10 +181,10 @@ td:not([empty=true]) {
 }
 
 div[showing=true] .toggle:before {
-  content:"+";
+  content:"-";
 }
 div[showing=false] .toggle:before {
-  content:"-";
+  content:"+";
 }
 
 div[showing=false] :not(.toggle):not(h3){
