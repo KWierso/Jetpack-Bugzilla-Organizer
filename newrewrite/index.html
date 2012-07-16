@@ -1,51 +1,66 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Jetpack Bug Dashboard</title>
-        <script type="text/javascript" src="../resources/d3.js"></script>
-        <script type="text/javascript" src="../resources/d3.layout.js"></script>
-        <script type="text/javascript" src="testscript.js" defer="defer" ></script>
-        <link href="dashboard.css" type="text/css" rel="stylesheet" />
-        <script>
-          try {
-            window.addEventListener("message", function(event) {
-              var type = event.data.split(":")[0];
-              var data = event.data.split(":")[0];
+  <head>
+    <meta charset="utf-8">
+    <title>Jetpack Bug Dashboard</title>
+    <script type="text/javascript" src="../resources/d3.js"></script>
+    <script type="text/javascript" src="../resources/d3.layout.js"></script>
+    <script type="text/javascript" src="testscript.js" defer="defer" ></script>
+    <link href="dashboard.css" type="text/css" rel="stylesheet" />
+    <script>
+      try {
+        window.addEventListener("message", function(event) {
+          var type = event.data.split(":")[0];
+          var data = event.data.split(":")[0];
 //            var myElement = document.createElement(
-            }, false);
-          } catch(e) { alert("error"); }
-        </script>
-    </head>
-    <body initial="true">
-        <div id="initialFetch">
-            <h3>Fetching bug data, please wait</h3>
-            <img src="../resources/rotate.gif"/>
-        </div>
-        
-        <div notloaded="true" id="assigneeCounts">
-          <h3>Bugs by assignee:</h3>
-          <table>
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div notloaded="true" id="priority">
-          <h3>Bugs by Priority</h3>
-          <table id="priorityTable">
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div notloaded="true" id="breakdown">
-            <h3>Bugs by Milestone</h3>
-            <table id="breakdownTable">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-        </div>
-        
-      <div id="cookie" style="display:none!important;"></div>
-      <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
-    </body>
+        }, false);
+      } catch(e) { alert("error"); }
+    </script>
+  </head>
+  <body initial="true">
+    <div id="initialFetch">
+      <h3>Fetching bug data, please wait<br/><br/>
+      <img src="../resources/rotate.gif"/></h3>
+    </div>
+    
+    <div notloaded="true" id="assigneeCounts">
+      <h3>Bugs by assignee:</h3>
+      <table>
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div notloaded="true" id="priority">
+      <h3>Bugs by Priority</h3>
+      <table id="priorityTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div notloaded="true" id="breakdown">
+      <h3>Bugs by Status/Milestone</h3>
+      <table id="breakdownTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    
+    <div notloaded="true" id="triageBreakdown">
+      <h3>
+        <span>Triage Followups</span>
+      </h3>
+      <div id="triageExtras">
+        <input type="button" value="Open All in tabs" id="openAllTriage"/>
+        <p id="triageTotalCount">Total: <span></span></p>
+        <p id="triageFollowupCount">Followups: <span></span></p>
+      </div>
+      <table id="triageTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+      
+    <div id="cookie" style="display:none!important;"></div>
+    <noscript>This page requires Javascript to be enabled. <br/><br/>Please enable Javascript (and whitelist this domain in NoScript, if enabled) to view and use this page.</noscript>
+  </body>
 </html>

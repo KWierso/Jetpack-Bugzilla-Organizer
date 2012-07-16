@@ -1,17 +1,99 @@
 var breakdowntrs;
 var authenticated = false;
-
+document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
 window.setTimeout(waitForAddon, 1000, true); 
 
 function waitForAddon() {
   getAssigneeBreakdown();
   getBreakdown();
   getPriorityBreakdown();
+  getTriageList();
 
   document.body.removeAttribute("initial");
   document.body.removeChild(document.getElementById("initialFetch"));
 }
 
+
+// initiate xhr to get triage data, pass it to d3.js
+function getTriageList() {
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" + 
+                "product=Add-on%20SDK&resolution=---&priority=--" +
+                "&include_fields=id,whiteboard,summary";
+
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+      if(request.status == 200) {
+        //assigneeBreakdownFixed(JSON.parse(request.response));
+        parseTriageList(JSON.parse(request.response).bugs);
+      } else {
+        alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
+      }
+    }
+  };
+  request.send(null);
+}
+
+function parseTriageList(bugs) {
+  var color = d3.scale.category20();
+
+  var triageTable = document.getElementById("triageTable");
+  var thead = triageTable.getElementsByTagName("thead")[0];
+  var tbody = triageTable.getElementsByTagName("tbody")[0];
+
+  var total = 0;
+  var followup = 0;
+
+  bugs = bugs.sort(function(a,b) { return a.id > b.id; });
+  
+  var headers = ["id", "followup", "summary"];
+  for(i in headers) {
+    var header = document.createElement("th");
+    header.innerHTML = headers[i];
+    thead.appendChild(header);
+  }
+  for(i in bugs) {
+    var bugRow = document.createElement("tr");
+    for(j in headers) {
+      var bugCell = document.createElement("td");
+      if(headers[j] != "followup") {
+        bugCell.textContent = bugs[i][headers[j]];
+        if(headers[j] == "summary") {
+          bugCell.setAttribute("title", bugs[i][headers[j]]);
+        }
+      } else {
+        if(bugs[i].whiteboard.search("[triage:followup]") >= 0) {
+          bugCell.textContent = "true";
+          followup = followup + 1;
+        }
+      }
+      bugCell.setAttribute("style", "background: " + color(i) + ";");
+      bugRow.appendChild(bugCell);
+    }
+    bugRow.addEventListener("click", function(evt) {
+      var tgt = evt.target;
+      while(tgt.tagName != "TR") {
+        tgt = tgt.parentNode;
+      }
+      tgt = tgt.firstChild.textContent;
+      window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + tgt);
+    }, false);
+    
+    tbody.appendChild(bugRow);
+    total = total + 1;
+  }
+  
+  document.getElementById("triageTotalCount")
+          .getElementsByTagName("span")[0].textContent = total;
+  document.getElementById("triageFollowupCount")
+          .getElementsByTagName("span")[0].textContent = followup;
+
+  document.getElementById("triageBreakdown").removeAttribute("notloaded");
+}
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getAssigneeBreakdown() {
@@ -51,7 +133,9 @@ function getAssigneeBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getPriorityBreakdown() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&y_axis_field=priority&x_axis_field=status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=" +
+                "Add-on%20SDK&y_axis_field=priority&x_axis_field=status&" +
+                "status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -72,7 +156,9 @@ function getPriorityBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getBreakdown() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=" +
+                "Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=" +
+                "status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -162,7 +248,9 @@ function assigneeBreakdownFixed(data) {
           cell.setAttribute("style", "background: " + color(i) + ";");
           tablerows[i].firstChild.setAttribute("style", "background: " + color(i) + ";");
         } else {
-        
+          if(thisRowData[j] == 0) {
+            cell.setAttribute("empty", "true");
+          }
         }
         tablerows[i].appendChild(cell);
       }
@@ -307,7 +395,10 @@ function priorityBreakdownFixed(data) {
         tablerows[i].appendChild(yHeader);
         yHeader.addEventListener("click", function(evt) {
           var priority = evt.target.innerHTML;
-          var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;query_format=advanced;priority=&&PRIORITY&&;bug_status=UNCONFIRMED;bug_status=NEW;bug_status=ASSIGNED;bug_status=REOPENED;product=Add-on%20SDK";
+          var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
+                        "query_format=advanced;priority=&&PRIORITY&&;bug_status=" +
+                        "UNCONFIRMED;bug_status=NEW;bug_status=ASSIGNED;bug_status=" +
+                        "REOPENED;product=Add-on%20SDK";
           thisURL = thisURL.replace("&&PRIORITY&&", priority);
           window.open(thisURL);
         }, false);
@@ -316,6 +407,9 @@ function priorityBreakdownFixed(data) {
         for(j in thisRowData) {
           var cell = document.createElement("td");
           cell.innerHTML = thisRowData[j];
+          if(thisRowData[j] == 0) {
+            cell.setAttribute("empty", "true");
+          }
           cell.addEventListener("click", function(evt) {
             if(evt.target.innerHTML == "0") {
               return;
@@ -323,7 +417,8 @@ function priorityBreakdownFixed(data) {
             var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
             var status = evt.target.parentNode.parentNode.parentNode.getElementsByTagName("th")[index].innerHTML;
             var priority = evt.target.parentNode.firstChild.innerHTML;
-            var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;query_format=advanced;priority=&&PRIORITY&&;bug_status=&&STATUS&&;product=Add-on%20SDK";
+            var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
+                          "query_format=advanced;priority=&&PRIORITY&&;bug_status=&&STATUS&&;product=Add-on%20SDK";
             thisURL = thisURL.replace("&&STATUS&&", status);
             thisURL = thisURL.replace("&&PRIORITY&&", priority);
             window.open(thisURL);
@@ -418,7 +513,8 @@ function breakdownFixed(data) {
         tablerows[i].appendChild(yHeader);
         yHeader.addEventListener("click", function(evt) {
           var target = evt.target.innerHTML;
-          var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;query_format=advanced;bug_status=&&STATUS&&;product=Add-on%20SDK";
+          var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
+                        "query_format=advanced;bug_status=&&STATUS&&;product=Add-on%20SDK";
           thisURL = thisURL.replace("&&STATUS&&", target);
           window.open(thisURL);
         }, false);
@@ -427,6 +523,9 @@ function breakdownFixed(data) {
         for(j in thisRowData) {
           var cell = document.createElement("td");
           cell.innerHTML = thisRowData[j];
+          if(thisRowData[j] == 0) {
+            cell.setAttribute("empty", "true");
+          }
           tablerows[i].appendChild(cell);
           cell.addEventListener("click", function(evt) {
             if(evt.target.innerHTML == "0") {
@@ -435,7 +534,9 @@ function breakdownFixed(data) {
             var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
             var milestone = evt.target.parentNode.parentNode.parentNode.getElementsByTagName("th")[index].innerHTML;
             var status = evt.target.parentNode.firstChild.innerHTML;
-            var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;query_format=advanced;bug_status=&&STATUS&&;target_milestone=&&MILESTONE&&;product=Add-on%20SDK";
+            var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
+                          "query_format=advanced;bug_status=&&STATUS&&;" +
+                          "target_milestone=&&MILESTONE&&;product=Add-on%20SDK";
             thisURL = thisURL.replace("&&MILESTONE&&", milestone);
             thisURL = thisURL.replace("&&STATUS&&", status);
             window.open(thisURL);
@@ -567,4 +668,11 @@ function pieClick(tgt, type) {
     }
     bdTableRows[arcIndex].setAttribute("selectedStatus", "true");
 
+}
+
+function openAllTriage() {
+  var list = document.getElementById("triageTable").getElementsByTagName("tr");
+  for(i in list) {
+    window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + list[i].firstChild.textContent);
+  }
 }
