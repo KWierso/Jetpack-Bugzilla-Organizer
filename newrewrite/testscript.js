@@ -67,8 +67,8 @@ function addToggles() {
 // initiate xhr to get old bug data, pass it to d3.js
 function getOldList() {
   var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" +
-                "product=Add-on%20SDK&resolution=---&changed_before=1mon" +
-                "&include_fields=id,assigned_to,summary";
+                "product=Add-on%20SDK&resolution=---&changed_before=" +
+                "672h&include_fields=id,assigned_to,summary,last_change_time";
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
