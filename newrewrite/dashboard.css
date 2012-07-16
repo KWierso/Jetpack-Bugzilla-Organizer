@@ -143,6 +143,7 @@ tr:hover, tr:hover td {
   table-layout: fixed;
   width:790px;
   word-wrap:break-word;
+  float:none;
 }
 
 #triageBreakdown td:nth-child(3) {
