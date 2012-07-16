@@ -114,7 +114,7 @@ function parseOldList(bugs) {
         bugCell.setAttribute("title", bugs[i][headers[j]]);
       }
       if(headers[j] == "assigned_to") {
-        bugCell.textContent = bugs[i][headers[j]].name ? bugs[i][headers[j]].name : "";
+        bugCell.textContent = bugs[i][headers[j]].name == "nobody" ? "" : bugs[i][headers[j]].name;
       }
       bugCell.setAttribute("style", "background: " + color(i) + ";");
       bugRow.appendChild(bugCell);
