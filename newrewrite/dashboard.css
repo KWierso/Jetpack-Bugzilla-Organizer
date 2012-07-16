@@ -162,6 +162,7 @@ tr:hover, tr:hover td {
 #triageExtras {
   text-align: right!important;
   float:right;
+  padding-right:10px;
 }
 
 td:not([empty=true]) {
