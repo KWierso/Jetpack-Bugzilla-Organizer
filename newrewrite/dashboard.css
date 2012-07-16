@@ -57,7 +57,7 @@ th {
   border:1px dashed!important;
 }
 
-#priority, #breakdown, #triageBreakdown {
+#priority, #breakdown, #triageBreakdown, #assigneeCounts {
     min-width:790px;
     float: left;
     border:1px solid black;
@@ -169,3 +169,23 @@ td:not([empty=true]) {
   cursor:pointer;
 }
 
+.toggle {
+  float:right;
+  border-left:1px solid black;
+  border-bottom:1px solid black;
+  font: monospace;
+  min-width:20px;
+  text-align: center;
+  cursor:pointer;
+}
+
+div[showing=true] .toggle:before {
+  content:"+";
+}
+div[showing=false] .toggle:before {
+  content:"-";
+}
+
+div[showing=false] :not(.toggle):not(h3){
+  display:none;
+}

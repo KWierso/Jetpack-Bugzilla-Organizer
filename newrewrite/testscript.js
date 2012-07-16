@@ -8,11 +8,30 @@ function waitForAddon() {
   getBreakdown();
   getPriorityBreakdown();
   getTriageList();
+  addToggles();
 
   document.body.removeAttribute("initial");
   document.body.removeChild(document.getElementById("initialFetch"));
 }
 
+function addToggles() {
+  var divs = document.getElementsByTagName("div");
+  for(i in divs) {
+    if(divs[i].className == "toggle") {
+      divs[i].addEventListener("click", function(evt) {
+        var target = evt.target.parentNode;
+        switch(target.getAttribute("showing")) {
+          case "true":
+            target.setAttribute("showing", "false");
+            break;
+          case "false":
+            target.setAttribute("showing", "true");
+            break;
+        }
+      }, false);
+    }
+  }
+}
 
 // initiate xhr to get triage data, pass it to d3.js
 function getTriageList() {

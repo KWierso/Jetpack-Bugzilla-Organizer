@@ -23,21 +23,24 @@
       <img src="../resources/rotate.gif"/></h3>
     </div>
     
-    <div notloaded="true" id="assigneeCounts">
+    <div notloaded="true" id="assigneeCounts" showing="true">
+      <div class="toggle"></div>
       <h3>Bugs by assignee:</h3>
       <table>
         <thead></thead>
         <tbody></tbody>
       </table>
     </div>
-    <div notloaded="true" id="priority">
+    <div notloaded="true" id="priority" showing="true">
+      <div class="toggle"></div>
       <h3>Bugs by Priority</h3>
       <table id="priorityTable">
         <thead></thead>
         <tbody></tbody>
       </table>
     </div>
-    <div notloaded="true" id="breakdown">
+    <div notloaded="true" id="breakdown" showing="true">
+      <div class="toggle"></div>
       <h3>Bugs by Status/Milestone</h3>
       <table id="breakdownTable">
         <thead></thead>
@@ -45,10 +48,9 @@
       </table>
     </div>
     
-    <div notloaded="true" id="triageBreakdown">
-      <h3>
-        <span>Triage Followups</span>
-      </h3>
+    <div notloaded="true" id="triageBreakdown" showing="true">
+      <div class="toggle"></div>
+      <h3>Triage Followups</h3>
       <div id="triageExtras">
         <input type="button" value="Open All in tabs" id="openAllTriage"/>
         <p id="triageFollowupCount">Followups: <span></span></p>
