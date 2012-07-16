@@ -1,6 +1,15 @@
 var breakdowntrs;
 var authenticated = false;
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
+var query = window.location.search.substring(1);
+if(query == "triage") {
+  document.getElementById("assigneeCounts").setAttribute("showing", "false");
+  document.getElementById("priority").setAttribute("showing", "false");
+  document.getElementById("breakdown").setAttribute("showing", "false");
+} else {
+  document.getElementById("triageBreakdown").setAttribute("showing", "false");
+}
+
 window.setTimeout(waitForAddon, 1000, true); 
 
 function waitForAddon() {

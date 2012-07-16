@@ -18,14 +18,19 @@
     </script>
   </head>
   <body initial="true">
-    <div id="initialFetch">
+    <div>
+      <h1> Jetpack Bug Dashboard</h1>
+      <p style="padding-left:5em;"> Click in any of the tables to open only those bugs!</p>
+    </div>
+    <div style="clear:both;" id="initialFetch">
       <h3>Fetching bug data, please wait<br/><br/>
       <img src="../resources/rotate.gif"/></h3>
     </div>
-    
+
+    <div style="clear:both;"></div>
     <div notloaded="true" id="assigneeCounts" showing="true">
       <div class="toggle"></div>
-      <h3>Bugs by assignee:</h3>
+      <h3>Bugs by assignee/Status</h3>
       <table>
         <thead></thead>
         <tbody></tbody>
@@ -33,7 +38,7 @@
     </div>
     <div notloaded="true" id="priority" showing="true">
       <div class="toggle"></div>
-      <h3>Bugs by Priority</h3>
+      <h3>Bugs by Priority/Status</h3>
       <table id="priorityTable">
         <thead></thead>
         <tbody></tbody>
