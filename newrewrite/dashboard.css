@@ -1,3 +1,9 @@
+body[triage=true] > #assigneeCounts,
+body[triage=true] > #priority,
+body[triage=true] > #breakdown {
+  display:none;
+}
+
 *[unneeded] {
   display:none;
 }
