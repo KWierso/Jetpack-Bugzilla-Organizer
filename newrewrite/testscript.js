@@ -3,6 +3,7 @@ var authenticated = false;
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
 
 var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
+var apiProduct = "Add-on%20SDK";
 
 var query = window.location.search.substring(1);
 switch(query) {
@@ -54,7 +55,7 @@ function waitForAddon() {
 }
 
 function getAttachments() {
-  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---" +
+  var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---" +
                           "&include_fields=id,summary,attachments";
 
   var dump = document.getElementById("dumpattachments");
@@ -246,7 +247,7 @@ function addToggles() {
 
 // initiate xhr to get old bug data, pass it to d3.js
 function getOldList() {
-  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---&changed_before=" +
+  var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---&changed_before=" +
                 "672h&include_fields=id,assigned_to,summary,last_change_time";
 
   var request = new XMLHttpRequest();
@@ -316,7 +317,7 @@ function parseOldList(bugs) {
 
 // initiate xhr to get triage data, pass it to d3.js
 function getTriageList() {
-  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---&priority=--" +
+  var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---&priority=--" +
                 "&include_fields=id,whiteboard,summary";
 
   var request = new XMLHttpRequest();
@@ -401,13 +402,13 @@ function getAssigneeBreakdown() {
   var cookieCookie = cookie.getAttribute("cookie");
 
   if(cookieLogin && cookieCookie) {
-    var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=" +
+    var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
                   "status&y_axis_field=assigned_to&status=NEW&status=" +
                   "ASSIGNED&status=UNCONFIRMED&status=REOPENED&userid=" + 
                   cookieLogin + "&cookie=" + cookieCookie;
     authenticated = true;
   } else {
-    var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=" +
+    var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
                   "status&y_axis_field=assigned_to&status=NEW&status=" +
                   "ASSIGNED&status=UNCONFIRMED&status=REOPENED";
   }
@@ -430,7 +431,7 @@ function getAssigneeBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getPriorityBreakdown() {
-  var someURL = apiRoot + "count?product=Add-on%20SDK&y_axis_field=priority&" +
+  var someURL = apiRoot + "count?product=" + apiProduct + "&y_axis_field=priority&" +
                 "x_axis_field=status&status=NEW&status=ASSIGNED&status=" +
                 "UNCONFIRMED&status=REOPENED";
 
@@ -453,7 +454,7 @@ function getPriorityBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getBreakdown() {
-  var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=target_milestone&" +
+  var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=target_milestone&" +
                 "y_axis_field=status&status=NEW&status=ASSIGNED&status=" +
                 "UNCONFIRMED&status=REOPENED";
 
@@ -583,7 +584,7 @@ function assigneeBreakdownFixed(data) {
         
         var bugSearchURL = "https://bugzilla.mozilla.org/buglist.cgi?" +
               "emailtype1=substring;emailassigned_to1=1;query_format=advanced;" +
-              "&&BUGSTATUS&&;product=Add-on%20SDK;email1=&&ASSIGNEE&&";
+              "&&BUGSTATUS&&;product=" + apiProduct + ";email1=&&ASSIGNEE&&";
               
         bugSearchURL = bugSearchURL.replace("&&ASSIGNEE&&", assignee);
         if(index == 0 || head.childNodes[index].innerHTML == "TOTAL") {
@@ -695,7 +696,7 @@ function priorityBreakdownFixed(data) {
           var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
                         "query_format=advanced;priority=&&PRIORITY&&;bug_status=" +
                         "UNCONFIRMED;bug_status=NEW;bug_status=ASSIGNED;bug_status=" +
-                        "REOPENED;product=Add-on%20SDK";
+                        "REOPENED;product=" + apiProduct + "";
           thisURL = thisURL.replace("&&PRIORITY&&", priority);
           window.open(thisURL);
         }, false);
@@ -715,7 +716,7 @@ function priorityBreakdownFixed(data) {
             var status = evt.target.parentNode.parentNode.parentNode.getElementsByTagName("th")[index].innerHTML;
             var priority = evt.target.parentNode.firstChild.innerHTML;
             var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
-                          "query_format=advanced;priority=&&PRIORITY&&;bug_status=&&STATUS&&;product=Add-on%20SDK";
+                          "query_format=advanced;priority=&&PRIORITY&&;bug_status=&&STATUS&&;product=" + apiProduct + "";
             thisURL = thisURL.replace("&&STATUS&&", status);
             thisURL = thisURL.replace("&&PRIORITY&&", priority);
             window.open(thisURL);
@@ -811,7 +812,7 @@ function breakdownFixed(data) {
         yHeader.addEventListener("click", function(evt) {
           var target = evt.target.innerHTML;
           var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
-                        "query_format=advanced;bug_status=&&STATUS&&;product=Add-on%20SDK";
+                        "query_format=advanced;bug_status=&&STATUS&&;product=" + apiProduct + "";
           thisURL = thisURL.replace("&&STATUS&&", target);
           window.open(thisURL);
         }, false);
@@ -833,7 +834,7 @@ function breakdownFixed(data) {
             var status = evt.target.parentNode.firstChild.innerHTML;
             var thisURL = "https://bugzilla.mozilla.org/buglist.cgi?list_id=3688684;" +
                           "query_format=advanced;bug_status=&&STATUS&&;" +
-                          "target_milestone=&&MILESTONE&&;product=Add-on%20SDK";
+                          "target_milestone=&&MILESTONE&&;product=" + apiProduct + "";
             thisURL = thisURL.replace("&&MILESTONE&&", milestone);
             thisURL = thisURL.replace("&&STATUS&&", status);
             window.open(thisURL);
