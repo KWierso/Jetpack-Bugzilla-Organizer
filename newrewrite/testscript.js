@@ -1,8 +1,12 @@
 var breakdowntrs;
 var authenticated = false;
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
-
+// Latest official
 var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
+
+// Testing 4.2 API
+//var apiRoot = "https://api-dev.bugzilla.mozilla.org/allizom/";
+
 var apiProduct = "Add-on%20SDK";
 
 var query = window.location.search.substring(1);
@@ -45,7 +49,6 @@ function waitForAddon() {
   getPriorityBreakdown();
   getTriageList();
   getOldList();
-  
   getAttachments();
 
   addToggles();
@@ -118,6 +121,8 @@ function getAttachments() {
 
         openRequests = openRequests.sort(function(a,b) { return a.bug > b.bug; });
 
+        document.getElementById("attachments")
+                .getElementsByTagName("h3")[0].textContent = "Attachments";
         parseAttachmentList(openRequests, acceptedRequests, deniedRequests);
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
@@ -349,7 +354,7 @@ function parseTriageList(bugs) {
   var followup = 0;
 
   bugs = bugs.sort(function(a,b) { return a.id > b.id; });
-  
+
   var headers = ["id", "followup", "summary"];
   for(i in headers) {
     var header = document.createElement("th");
@@ -366,9 +371,11 @@ function parseTriageList(bugs) {
           bugCell.setAttribute("title", bugs[i][headers[j]]);
         }
       } else {
-        if(bugs[i].whiteboard.search("[triage:followup]") >= 0) {
-          bugCell.textContent = "true";
-          followup = followup + 1;
+        if(bugs[i].whiteboard) {
+          if(bugs[i].whiteboard.search("[triage:followup]") >= 0) {
+            bugCell.textContent = "true";
+            followup = followup + 1;
+          }
         }
       }
       bugCell.setAttribute("style", "background: " + color(i) + ";");
