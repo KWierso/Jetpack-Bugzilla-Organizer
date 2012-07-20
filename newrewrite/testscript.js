@@ -23,10 +23,15 @@ switch(query) {
   case "old":
     document.body.setAttribute("old", "true");
     break;
+
+  case "attachment":
+    document.body.setAttribute("attachments", "true");
+    break;
     
   default:
     document.getElementById("triageBreakdown").setAttribute("showing", "false");  
     document.getElementById("oldBugs").setAttribute("showing", "false");  
+    document.getElementById("attachments").setAttribute("showing", "false");  
 } 
 
 window.setTimeout(waitForAddon, 1000, true); 
@@ -37,6 +42,8 @@ function waitForAddon() {
   getPriorityBreakdown();
   getTriageList();
   getOldList();
+  
+  getAttachments();
 
   addToggles();
 
@@ -44,6 +51,178 @@ function waitForAddon() {
   document.body.removeChild(document.getElementById("initialFetch"));
 }
 
+function getAttachments() {
+  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" +
+                "product=Add-on%20SDK&resolution=---&include_fields=id,summary,attachments";
+
+  var dump = document.getElementById("dumpattachments");
+  
+  var openRequests = [];
+  var acceptedRequests = [];
+  var deniedRequests = [];
+  
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+      if(request.status == 200) {
+        var bugs = JSON.parse(request.response).bugs;
+        for each(var bug in bugs) {
+          if(bug.attachments) {
+            for each (var attachment in bug.attachments) {
+              if(attachment) {
+                if(attachment.flags) {
+                  for each(var flag in attachment.flags) {
+                    var item = {
+                      bug: bug.id,
+                      summary: bug.summary,
+                      attachmentID: attachment.id,
+                      description: attachment.description,
+                      attacher: attachment.attacher.name,
+                      attachmentRef:attachment.ref,
+                      flagName: flag.name,
+                      flagStatus: flag.status,
+                      flagSetter: flag.setter.name,
+                      flagRequestee: ""
+                    }
+                    if(item.flagStatus == "?") {
+                      item.flagRequestee = flag.requestee.name;
+                    }
+                    switch(item.flagStatus) {
+                      case "?":
+                        openRequests.push(item);
+                      break;
+                      
+                      case "+":
+                        acceptedRequests.push(item);
+                      break;
+                      
+                      case "-":
+                        deniedRequests.push(item);
+                      break;
+                      
+                      default:
+                      // wtf?
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        openRequests = openRequests.sort(function(a,b) { return a.bug > b.bug; });
+
+        parseAttachmentList(openRequests, acceptedRequests, deniedRequests);
+      } else {
+        alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
+      }
+    }
+  };
+  request.send(null);
+}
+
+function parseAttachmentList(open, accepted, denied) {
+  var color = d3.scale.category20();
+
+  var attachmentTable = document.getElementById("attachmentTable");
+  var thead = attachmentTable.getElementsByTagName("thead")[0];
+  var tbody = attachmentTable.getElementsByTagName("tbody")[0];
+  
+  var headers = ["Bug ID", "Attachment Description", "Flags"];
+  for(i in headers) {
+    var header = document.createElement("th");
+    header.innerHTML = headers[i];
+    thead.appendChild(header);
+  }
+  for(i in open) {
+    var existingRow = getExistingRow(open[i].attachmentID, tbody);
+    if(existingRow) { alert(existingRow); }
+    var thisRow = document.createElement("tr");
+    thisRow.setAttribute("attachmentid", open[i].attachmentID);
+    thisRow.setAttribute("attachmentref", open[i].attachmentRef);
+    for(j in headers) {
+      var thisCell = document.createElement("td");
+      switch(j) {
+        case "0":
+          thisCell.textContent = open[i].bug;
+          thisCell.title = open[i].summary;
+          thisCell.addEventListener("click", function(evt) {
+            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + evt.target.textContent);
+          }, false);
+        break;
+        
+        case "1":
+          thisCell.textContent = open[i].description;
+          thisCell.title = open[i].description;
+          thisCell.addEventListener("click", function(evt) {
+            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + 
+                        evt.target.parentNode.getAttribute("attachmentref"));
+          }, false);
+        break;
+        
+        case "2":
+          var thisFlag = document.createElement("div");
+          thisFlag.textContent = open[i].flagSetter + ": " + open[i].flagName + 
+                                 open[i].flagStatus + open[i].flagRequestee;
+          thisFlag.title = thisFlag.textContent;
+          thisCell.appendChild(thisFlag);
+          thisCell.addEventListener("click", function(evt) {
+            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + 
+                        evt.target.parentNode.getAttribute("attachmentref"));
+          }, false);
+        break;
+        
+        default:
+      }
+      thisCell.setAttribute("style", "background: " + color(i) + ";");
+      thisRow.appendChild(thisCell);
+    }
+    tbody.appendChild(thisRow);
+  }
+  
+  for(i in accepted) {
+    var existingRow = getExistingRow(accepted[i].attachmentID, tbody);
+    if(existingRow) { 
+      var cell = existingRow.getElementsByTagName("td");
+      cell = cell[cell.length-1];
+
+      var flag = document.createElement("div");
+      flag.textContent = accepted[i].flagSetter + ": " + accepted[i].flagName + accepted[i].flagStatus;
+      flag.setAttribute("style", "opacity:0.5!important;");
+      cell.appendChild(flag);
+    }
+  }
+  
+  for(i in denied) {
+    var existingRow = getExistingRow(denied[i].attachmentID, tbody);
+    if(existingRow) { 
+      var cell = existingRow.getElementsByTagName("td");
+      cell = cell[cell.length-1];
+
+      var flag = document.createElement("div");
+      flag.textContent = denied[i].flagSetter + ": " + denied[i].flagName + denied[i].flagStatus;
+      cell.appendChild(flag);
+    }
+  }
+  
+  document.getElementById("attachments").removeAttribute("notloaded");
+}
+
+function getExistingRow(ID, tbody) {
+  var row;
+  for each(var tr in tbody.getElementsByTagName("tr")) {
+    try {
+      if(tr.getAttribute("attachmentid") == ID) {
+        row = tr;
+      }
+    } catch(e) {}
+  }
+  return row;
+}
 function addToggles() {
   var divs = document.getElementsByTagName("div");
   for(i in divs) {
@@ -62,7 +241,6 @@ function addToggles() {
     }
   }
 }
-
 
 // initiate xhr to get old bug data, pass it to d3.js
 function getOldList() {

@@ -1,20 +1,23 @@
 body[triage=true] > #assigneeCounts,
 body[triage=true] > #priority,
-body[status=true] > #oldBugs,
+body[triage=true] > #oldBugs,
+body[triage=true] > #attachments,
 body[triage=true] > #breakdown {
   display:none;
 }
 
 body[assignee=true] > #triageBreakdown,
 body[assignee=true] > #priority,
-body[status=true] > #oldBugs,
+body[assignee=true] > #oldBugs,
+body[assignee=true] > #attachments,
 body[assignee=true] > #breakdown {
   display:none;
 }
 
 body[priority=true] > #triageBreakdown,
 body[priority=true] > #assigneeCounts,
-body[status=true] > #oldBugs,
+body[priority=true] > #oldBugs,
+body[priority=true] > #attachments,
 body[priority=true] > #breakdown {
   display:none;
 }
@@ -22,6 +25,7 @@ body[priority=true] > #breakdown {
 body[status=true] > #triageBreakdown,
 body[status=true] > #assigneeCounts,
 body[status=true] > #oldBugs,
+body[status=true] > #attachments,
 body[status=true] > #priority {
   display:none;
 }
@@ -29,14 +33,29 @@ body[status=true] > #priority {
 body[old=true] > #triageBreakdown,
 body[old=true] > #assigneeCounts,
 body[old=true] > #breakdown,
+body[old=true] > #attachments,
 body[old=true] > #priority {
+  display:none;
+}
+
+body[attachments=true] > #triageBreakdown,
+body[attachments=true] > #assigneeCounts,
+body[attachments=true] > #breakdown,
+body[attachments=true] > #oldBugs,
+body[attachments=true] > #priority {
   display:none;
 }
 
 *[unneeded] {
   display:none;
 }
-*[notloaded] {
+body > div[notloaded] > img {
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:50px;
+}
+body > div:not([notloaded]) > img {
   display:none;
 }
 
@@ -92,7 +111,7 @@ th {
   border:1px dashed!important;
 }
 
-#priority, #breakdown, #triageBreakdown, #assigneeCounts, #oldBugs {
+#priority, #breakdown, #triageBreakdown, #assigneeCounts, #oldBugs, #attachments {
     min-width:790px;
     float: left;
     border:1px solid black;
@@ -134,20 +153,6 @@ th {
     text-align: center;
 }
 
-th[sorted] {
-    text-decoration: underline;
-}
-th[sorted] img {
-    -moz-transform: scale(0.5);
-}
-th:not([sorted]) img {
-    display:none!important;
-}
-
-th[sorted=up] img {
-    -moz-transform: scale(0.5) rotate(180deg);
-}
-
 #bugtable {
     clear: both;
 }
@@ -172,7 +177,7 @@ tr:hover, tr:hover td {
   background: lightgrey !important;
 }
 
-#triageBreakdown table, #oldBugs table {
+#triageBreakdown table, #oldBugs table, #attachmentTable {
   table-layout: fixed;
   width:790px;
   word-wrap:break-word;
@@ -229,4 +234,24 @@ div[showing=false] .toggle:before {
 
 div[showing=false] :not(.toggle):not(h3){
   display:none;
+}
+
+#attachmentTable div:not:(:last-child):not(:only-child) {
+  border-bottom:1px solid black;
+}
+#attachmentTable td:first-child, #attachmentTable  th:first-child {
+  width: 15%!important;
+  overflow: hidden!important;
+}
+#attachmentTable td:nth-child(2), #attachmentTable th:nth-child(2) {
+  width: 55%!important;
+  overflow: hidden!important;
+  text-overflow: ellipsis !important;
+  white-space:nowrap;
+}
+#attachmentTable td:nth-child(3), #attachmentTable th:nth-child(3) {
+  width: 30%!important;
+  overflow: hidden!important;
+  text-overflow: ellipsis !important;
+  white-space:nowrap;
 }
