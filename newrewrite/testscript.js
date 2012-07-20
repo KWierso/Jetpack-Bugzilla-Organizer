@@ -31,7 +31,7 @@ switch(query) {
     document.body.setAttribute("old", "true");
     break;
 
-  case "attachment":
+  case "attachments":
     document.body.setAttribute("attachments", "true");
     break;
     

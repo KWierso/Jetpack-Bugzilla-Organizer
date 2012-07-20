@@ -236,7 +236,7 @@ div[showing=false] :not(.toggle):not(h3){
   display:none;
 }
 
-#attachmentTable div:not:(:last-child):not(:only-child) {
+#attachmentTable div:not(:last-child):not(:only-child) {
   border-bottom:1px solid black;
 }
 #attachmentTable td:first-child, #attachmentTable  th:first-child {
