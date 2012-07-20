@@ -34,11 +34,6 @@ switch(query) {
   case "attachments":
     document.body.setAttribute("attachments", "true");
     break;
-    
-  default:
-    document.getElementById("triageBreakdown").setAttribute("showing", "false");  
-    document.getElementById("oldBugs").setAttribute("showing", "false");  
-    document.getElementById("attachments").setAttribute("showing", "false");  
 } 
 
 window.setTimeout(waitForAddon, 1000, true); 
@@ -54,7 +49,6 @@ function waitForAddon() {
   addToggles();
 
   document.body.removeAttribute("initial");
-  document.body.removeChild(document.getElementById("initialFetch"));
 }
 
 function getAttachments() {
