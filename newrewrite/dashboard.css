@@ -56,7 +56,7 @@ body > div[notloaded] > img {
   margin-bottom:50px;
 }
 
-body > div[notloaded] > #oldTotalCount, 
+body > div[notloaded] > #oldTotalCount,
 body > div[notloaded] > #triageExtras {
   display:none;
 }

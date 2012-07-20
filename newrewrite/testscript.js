@@ -14,7 +14,7 @@ switch(query) {
   case "triage":
     document.body.setAttribute("triage", "true");
     break;
-  
+
   case "assignee":
     document.body.setAttribute("assignee", "true");
     break;
@@ -34,9 +34,9 @@ switch(query) {
   case "attachments":
     document.body.setAttribute("attachments", "true");
     break;
-} 
+}
 
-window.setTimeout(waitForAddon, 1000, true); 
+window.setTimeout(waitForAddon, 1000, true);
 
 function waitForAddon() {
   getAssigneeBreakdown();
@@ -56,11 +56,11 @@ function getAttachments() {
                           "&include_fields=id,summary,attachments";
 
   var dump = document.getElementById("dumpattachments");
-  
+
   var openRequests = [];
   var acceptedRequests = [];
   var deniedRequests = [];
-  
+
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
   request.setRequestHeader("Accept", "application/json");
@@ -94,15 +94,15 @@ function getAttachments() {
                       case "?":
                         openRequests.push(item);
                       break;
-                      
+
                       case "+":
                         acceptedRequests.push(item);
                       break;
-                      
+
                       case "-":
                         deniedRequests.push(item);
                       break;
-                      
+
                       default:
                       // wtf?
                     }
@@ -133,7 +133,7 @@ function parseAttachmentList(open, accepted, denied) {
   var attachmentTable = document.getElementById("attachmentTable");
   var thead = attachmentTable.getElementsByTagName("thead")[0];
   var tbody = attachmentTable.getElementsByTagName("tbody")[0];
-  
+
   var headers = ["Bug ID", "Attachment Description", "Flags"];
   for(i in headers) {
     var header = document.createElement("th");
@@ -156,28 +156,28 @@ function parseAttachmentList(open, accepted, denied) {
             window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + evt.target.textContent);
           }, false);
         break;
-        
+
         case "1":
           thisCell.textContent = open[i].description;
           thisCell.title = open[i].description;
           thisCell.addEventListener("click", function(evt) {
-            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + 
+            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" +
                         evt.target.parentNode.getAttribute("attachmentref"));
           }, false);
         break;
-        
+
         case "2":
           var thisFlag = document.createElement("div");
-          thisFlag.textContent = open[i].flagSetter + ": " + open[i].flagName + 
+          thisFlag.textContent = open[i].flagSetter + ": " + open[i].flagName +
                                  open[i].flagStatus + open[i].flagRequestee;
           thisFlag.title = thisFlag.textContent;
           thisCell.appendChild(thisFlag);
           thisCell.addEventListener("click", function(evt) {
-            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + 
+            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" +
                         evt.target.parentNode.getAttribute("attachmentref"));
           }, false);
         break;
-        
+
         default:
       }
       thisCell.setAttribute("style", "background: " + color(i) + ";");
@@ -185,10 +185,10 @@ function parseAttachmentList(open, accepted, denied) {
     }
     tbody.appendChild(thisRow);
   }
-  
+
   for(i in accepted) {
     var existingRow = getExistingRow(accepted[i].attachmentID, tbody);
-    if(existingRow) { 
+    if(existingRow) {
       var cell = existingRow.getElementsByTagName("td");
       cell = cell[cell.length-1];
 
@@ -198,10 +198,10 @@ function parseAttachmentList(open, accepted, denied) {
       cell.appendChild(flag);
     }
   }
-  
+
   for(i in denied) {
     var existingRow = getExistingRow(denied[i].attachmentID, tbody);
-    if(existingRow) { 
+    if(existingRow) {
       var cell = existingRow.getElementsByTagName("td");
       cell = cell[cell.length-1];
 
@@ -210,7 +210,7 @@ function parseAttachmentList(open, accepted, denied) {
       cell.appendChild(flag);
     }
   }
-  
+
   document.getElementById("attachments").removeAttribute("notloaded");
 }
 
@@ -277,7 +277,7 @@ function parseOldList(bugs) {
   var total = 0;
 
   bugs = bugs.sort(function(a,b) { return a.id > b.id; });
-  
+
   var headers = ["id", "assigned_to", "summary"];
   for(i in headers) {
     var header = document.createElement("th");
@@ -306,7 +306,7 @@ function parseOldList(bugs) {
       tgt = tgt.firstChild.textContent;
       window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + tgt);
     }, false);
-    
+
     tbody.appendChild(bugRow);
     total = total + 1;
   }
@@ -383,11 +383,11 @@ function parseTriageList(bugs) {
       tgt = tgt.firstChild.textContent;
       window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + tgt);
     }, false);
-    
+
     tbody.appendChild(bugRow);
     total = total + 1;
   }
-  
+
   document.getElementById("triageTotalCount")
           .getElementsByTagName("span")[0].textContent = total;
   document.getElementById("triageFollowupCount")
@@ -405,7 +405,7 @@ function getAssigneeBreakdown() {
   if(cookieLogin && cookieCookie) {
     var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
                   "status&y_axis_field=assigned_to&status=NEW&status=" +
-                  "ASSIGNED&status=UNCONFIRMED&status=REOPENED&userid=" + 
+                  "ASSIGNED&status=UNCONFIRMED&status=REOPENED&userid=" +
                   cookieLogin + "&cookie=" + cookieCookie;
     authenticated = true;
   } else {
@@ -478,7 +478,7 @@ function getBreakdown() {
 
 function assigneeBreakdownFixed(data) {
   var color = d3.scale.category20b();
-  
+
   var tablerows = document.getElementById("assigneeCounts")
                         .getElementsByTagName("table")[0]
                         .getElementsByTagName("tr");
@@ -488,7 +488,7 @@ function assigneeBreakdownFixed(data) {
   var counts = data.data;
   var xHeads = data.x_labels;
   var yHeads = data.y_labels;
-  
+
   if(counts == "") {
     document.getElementById("zarroBoogs").removeAttribute("unneeded");
   } else {
@@ -511,7 +511,7 @@ function assigneeBreakdownFixed(data) {
       header.setAttribute("index", head.childNodes.length);
       head.appendChild(header);
     }
-    
+
     // Add a header for totals
     var header = document.createElement("th");
     header.innerHTML = "TOTAL";
@@ -527,7 +527,7 @@ function assigneeBreakdownFixed(data) {
 
       // Add the first column from the yHeads dataset
       var yHeader = document.createElement("td");
-      yHeader.innerHTML = (yHeads[i] == "nobody" || 
+      yHeader.innerHTML = (yHeads[i] == "nobody" ||
                            yHeads[i] == "nobody@mozilla.org") ? "UNASSIGNED" : yHeads[i];
       yHeader.className = "first";
       yHeader.setAttribute("email", yHeads[i]);
@@ -553,7 +553,7 @@ function assigneeBreakdownFixed(data) {
         }
         tablerows[i].appendChild(cell);
       }
-      
+
       // Calculate totals
       var cell = document.createElement("td");
       cell.innerHTML = total;
@@ -562,31 +562,31 @@ function assigneeBreakdownFixed(data) {
         tablerows[i].setAttribute("style", "background: " + color(i) + ";");
       }
       tablerows[i].appendChild(cell);
-      
+
       // Listen for clicks
       tablerows[i].addEventListener("click", function(evt) {
         var target = evt.target;
         var newtarget = target;
-        
+
         var index;
         while(newtarget.tagName != "TR") {
           if(newtarget.tagName == "TD") {
             index = Array.prototype.indexOf.call(newtarget.parentNode.childNodes, newtarget);
-          } 
+          }
           newtarget = newtarget.parentNode;
         }
         var assignee = newtarget.getElementsByTagName("td")[0].getAttribute("email");
         if(assignee == "UNASSIGNED") {
           assignee = "nobody";
         }
-        
+
         var statusstring = "bug_status=UNCONFIRMED;bug_status=NEW;" +
               "bug_status=ASSIGNED;bug_status=REOPENED";
-        
+
         var bugSearchURL = "https://bugzilla.mozilla.org/buglist.cgi?" +
               "emailtype1=substring;emailassigned_to1=1;query_format=advanced;" +
               "&&BUGSTATUS&&;product=" + apiProduct + ";email1=&&ASSIGNEE&&";
-              
+
         bugSearchURL = bugSearchURL.replace("&&ASSIGNEE&&", assignee);
         if(index == 0 || head.childNodes[index].innerHTML == "TOTAL") {
           bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", statusstring);
@@ -603,7 +603,7 @@ function assigneeBreakdownFixed(data) {
           if(newtarget.childNodes[index].innerHTML == "") return;
           bugSearchURL = bugSearchURL.replace("&&BUGSTATUS&&", "bug_status=REOPENED");
         }
-        
+
         window.open(bugSearchURL);
       }, false);
     }
@@ -623,7 +623,7 @@ function getUserName(header, userURI) {
         header.innerHTML = JSON.parse(request.response).real_name
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
-  
+
       }
     }
   };
@@ -668,7 +668,7 @@ function priorityBreakdownFixed(data) {
         var header = document.createElement("th");
         header.innerHTML = xHeads[i];
         header.setAttribute("index", head.childNodes.length);
-        
+
         /*header.addEventListener("click", function(evt) {
           var bugtable = document.getElementById("bugtable");
           bugtable.setAttribute("filtermilestone", evt.target.innerHTML);
@@ -678,7 +678,7 @@ function priorityBreakdownFixed(data) {
           document.getElementById("breakdownTable").removeAttribute("selectedStatus");
           document.getElementById("piemilestone").removeAttribute("selectedStatus");
         }, false);*/
-        
+
         head.appendChild(header);
       }
 
@@ -786,7 +786,7 @@ function breakdownFixed(data) {
         var header = document.createElement("th");
         header.innerHTML = xHeads[i];
         header.setAttribute("index", head.childNodes.length);
-        
+
         header.addEventListener("click", function(evt) {
           var bugtable = document.getElementById("bugtable");
           bugtable.setAttribute("filtermilestone", evt.target.innerHTML);
@@ -796,7 +796,7 @@ function breakdownFixed(data) {
           document.getElementById("breakdownTable").removeAttribute("selectedStatus");
           document.getElementById("piemilestone").removeAttribute("selectedStatus");
         }, false);
-        
+
         head.appendChild(header);
       }
 
@@ -920,7 +920,7 @@ function pie(data, status, target) {
       paths = document.getElementById("piepriority").getElementsByTagName("path");
       pieArcs = document.getElementById("piepriority").getElementsByTagName("g");
     }
-    
+
     for(var i=0;i<tablerows.length;i++) {
         tablerows[i].style.background = paths[i].getAttribute("fill");
     }
