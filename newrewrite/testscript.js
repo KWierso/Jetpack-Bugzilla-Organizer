@@ -2,6 +2,8 @@ var breakdowntrs;
 var authenticated = false;
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
 
+var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
+
 var query = window.location.search.substring(1);
 switch(query) {
   case "triage":
@@ -52,8 +54,8 @@ function waitForAddon() {
 }
 
 function getAttachments() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" +
-                "product=Add-on%20SDK&resolution=---&include_fields=id,summary,attachments";
+  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---" +
+                          "&include_fields=id,summary,attachments";
 
   var dump = document.getElementById("dumpattachments");
   
@@ -244,8 +246,7 @@ function addToggles() {
 
 // initiate xhr to get old bug data, pass it to d3.js
 function getOldList() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" +
-                "product=Add-on%20SDK&resolution=---&changed_before=" +
+  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---&changed_before=" +
                 "672h&include_fields=id,assigned_to,summary,last_change_time";
 
   var request = new XMLHttpRequest();
@@ -315,8 +316,7 @@ function parseOldList(bugs) {
 
 // initiate xhr to get triage data, pass it to d3.js
 function getTriageList() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/bug?" + 
-                "product=Add-on%20SDK&resolution=---&priority=--" +
+  var someURL = apiRoot + "bug?product=Add-on%20SDK&resolution=---&priority=--" +
                 "&include_fields=id,whiteboard,summary";
 
   var request = new XMLHttpRequest();
@@ -401,17 +401,15 @@ function getAssigneeBreakdown() {
   var cookieCookie = cookie.getAttribute("cookie");
 
   if(cookieLogin && cookieCookie) {
-    var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?" +
-                  "product=Add-on%20SDK&x_axis_field=status&y_axis_field" +
-                  "=assigned_to&status=NEW&status=ASSIGNED&status=" +
-                  "UNCONFIRMED&status=REOPENED&userid=" + cookieLogin +
-                  "&cookie=" + cookieCookie;
+    var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=" +
+                  "status&y_axis_field=assigned_to&status=NEW&status=" +
+                  "ASSIGNED&status=UNCONFIRMED&status=REOPENED&userid=" + 
+                  cookieLogin + "&cookie=" + cookieCookie;
     authenticated = true;
   } else {
-    var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?" +
-                  "product=Add-on%20SDK&x_axis_field=status&y_axis_field" +
-                  "=assigned_to&status=NEW&status=ASSIGNED&status=" +
-                  "UNCONFIRMED&status=REOPENED";
+    var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=" +
+                  "status&y_axis_field=assigned_to&status=NEW&status=" +
+                  "ASSIGNED&status=UNCONFIRMED&status=REOPENED";
   }
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -432,9 +430,9 @@ function getAssigneeBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getPriorityBreakdown() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=" +
-                "Add-on%20SDK&y_axis_field=priority&x_axis_field=status&" +
-                "status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
+  var someURL = apiRoot + "count?product=Add-on%20SDK&y_axis_field=priority&" +
+                "x_axis_field=status&status=NEW&status=ASSIGNED&status=" +
+                "UNCONFIRMED&status=REOPENED";
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -455,9 +453,9 @@ function getPriorityBreakdown() {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getBreakdown() {
-  var someURL = "https://api-dev.bugzilla.mozilla.org/latest/count?product=" +
-                "Add-on%20SDK&x_axis_field=target_milestone&y_axis_field=" +
-                "status&status=NEW&status=ASSIGNED&status=UNCONFIRMED&status=REOPENED";
+  var someURL = apiRoot + "count?product=Add-on%20SDK&x_axis_field=target_milestone&" +
+                "y_axis_field=status&status=NEW&status=ASSIGNED&status=" +
+                "UNCONFIRMED&status=REOPENED";
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
