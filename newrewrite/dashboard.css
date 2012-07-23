@@ -197,7 +197,6 @@ tr:hover, tr:hover td {
   overflow:hidden!important;
 }
 
-
 #triageBreakdown table td:nth-child(1), #triageBreakdown table th:nth-child(1),
 #triageBreakdown table td:nth-child(2), #triageBreakdown table th:nth-child(2){
   width: 10%!important;
