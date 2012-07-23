@@ -299,7 +299,22 @@ function parseOldList(bugs) {
 
   var total = 0;
 
-  bugs = bugs.sort(function(a,b) { return a.id > b.id; });
+  bugs = bugs.sort(function(a,b) { return a.assigned_to.name > b.assigned_to.name; });
+  bugs = bugs.sort(function(a,b) {
+    var aEmpty, bEmpty;
+    try {
+      aEmpty = a.assigned_to.name == "nobody" || a.assigned_to.name == "nobody@mozilla.org" ? 0 : 1;
+    } catch(e) {
+      aEmpty = 0;
+    }
+    try {
+      bEmpty = b.assigned_to.name == "nobody" || b.assigned_to.name == "nobody@mozilla.org" ? 0 : 1;
+    } catch(e) {
+      bEmpty = 0;
+    }
+    //return aEmpty < bEmpty;
+    return aEmpty < bEmpty;
+  });
 
   var headers = ["id", "assigned_to", "summary"];
   for(i in headers) {
