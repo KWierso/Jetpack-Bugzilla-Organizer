@@ -1,5 +1,7 @@
 var breakdowntrs;
 var authenticated = false;
+var auth = {"id":"", "cookie":""}
+
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
 // Latest official
 var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
@@ -36,9 +38,11 @@ switch(query) {
     break;
 }
 
-window.setTimeout(waitForAddon, 1000, true);
+window.setTimeout(waitForAddon, 2000, true);
 
 function waitForAddon() {
+  authenticate();
+
   getAssigneeBreakdown();
   getBreakdown();
   getPriorityBreakdown();
@@ -51,12 +55,23 @@ function waitForAddon() {
   document.body.removeAttribute("initial");
 }
 
+function authenticate() {
+  var cookie = document.getElementById("cookie");
+  auth.id = cookie.getAttribute("login");
+  auth.cookie = cookie.getAttribute("cookie");
+  if(auth.id != "" && auth.cookie != "") {
+    authenticated = true;
+  }
+}
+
 function getAttachments() {
   var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---" +
                           "&include_fields=id,summary,attachments";
-
-  var dump = document.getElementById("dumpattachments");
-
+/* // This makes the usernames way to big for the column, needs much more work
+  if(authenticated) {
+    someURL = someURL + "&userid=" + auth.id + "&cookie=" + auth.cookie;
+  }
+*/
   var openRequests = [];
   var acceptedRequests = [];
   var deniedRequests = [];
@@ -262,7 +277,6 @@ function getOldList() {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        //assigneeBreakdownFixed(JSON.parse(request.response));
         parseOldList(JSON.parse(request.response).bugs);
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
@@ -404,16 +418,11 @@ function parseTriageList(bugs) {
 
 // initiate xhr to get breakdown data, pass it to d3.js
 function getAssigneeBreakdown() {
-  var cookie = document.getElementById("cookie");
-  var cookieLogin = cookie.getAttribute("login");
-  var cookieCookie = cookie.getAttribute("cookie");
-
-  if(cookieLogin && cookieCookie) {
+  if(authenticated) {
     var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
                   "status&y_axis_field=assigned_to&status=NEW&status=" +
                   "ASSIGNED&status=UNCONFIRMED&status=REOPENED&userid=" +
-                  cookieLogin + "&cookie=" + cookieCookie;
-    authenticated = true;
+                  auth.id + "&cookie=" + auth.cookie;
   } else {
     var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
                   "status&y_axis_field=assigned_to&status=NEW&status=" +
@@ -626,7 +635,7 @@ function getUserName(header, userURI) {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        header.innerHTML = JSON.parse(request.response).real_name
+        header.textContent = JSON.parse(request.response).real_name
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
 
