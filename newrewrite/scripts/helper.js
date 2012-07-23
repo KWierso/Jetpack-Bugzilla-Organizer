@@ -1,3 +1,5 @@
+// Event listener for the Triage section's "Open all in tabs" button.
+// Opens every bug in the triage list into a separate tab when clicked.
 function openAllTriage() {
   var list = document.getElementById("triageTable").getElementsByTagName("tr");
   for(i in list) {
@@ -5,7 +7,8 @@ function openAllTriage() {
   }
 }
 
-// Click handler for the pie chart
+// When a piece of the pie chart is clicked, 
+// highlight the corresponding row in the table.
 function pieClick(tgt, type) {
     while(tgt.nodeName != "g") {
       tgt = tgt.parentNode;
@@ -41,7 +44,7 @@ function pieClick(tgt, type) {
 
 }
 
-// Function to draw a pie chart from the given data set
+// Use D3.js to create a pie chart of the given data
 function pie(data, status, target) {
     var myTarget;
     var w = 300,
@@ -109,6 +112,8 @@ function pie(data, status, target) {
     }
 }
 
+// Look up a user's information from Bugzilla,
+// and insert the user's name into the supplied field
 function getUserName(header, userURI) {
   var request = new XMLHttpRequest();
   request.open('GET', userURI, true);
@@ -127,13 +132,13 @@ function getUserName(header, userURI) {
         }
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
-
       }
     }
   };
   request.send(null);
 }
 
+// Add +/- toggle button to each section of the page
 function addToggles() {
   var divs = document.getElementsByTagName("div");
   for(i in divs) {
@@ -153,6 +158,8 @@ function addToggles() {
   }
 }
 
+// For a given attachment ID, see if an existing row already exists.
+// Used when there are multiple patches for a single bug.
 function getExistingRow(ID, tbody) {
   var row;
   for each(var tr in tbody.getElementsByTagName("tr")) {

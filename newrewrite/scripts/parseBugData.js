@@ -1,3 +1,4 @@
+// This is the incoming list of bugs/attachments with pending requests
 function parseAttachmentList(open, accepted, denied) {
   var color = d3.scale.category20();
 
@@ -91,6 +92,7 @@ function parseAttachmentList(open, accepted, denied) {
   document.getElementById("attachments").removeAttribute("notloaded");
 }
 
+// This is the incoming list of bugs that haven't been touched in a month
 function parseOldList(bugs) {
   var color = d3.scale.category20();
 
@@ -132,7 +134,7 @@ function parseOldList(bugs) {
       }
       if(headers[j] == "assigned_to") {
         bugCell.textContent = bugs[i][headers[j]].name == "nobody" || bugs[i][headers[j]].name == "nobody@mozilla.org" ? "" : bugs[i][headers[j]].name;
-        if(authenticated && bugCell.innerHTML != "") {
+        if(authenticated && bugCell.innerHTML != "" && bugCell.textContent.search("@") > 0) {
           bugCell.setAttribute("title", bugCell.textContent);
           getUserName(bugCell, "https://api-dev.bugzilla.mozilla.org/latest/user/" + bugCell.textContent);
         }
@@ -156,6 +158,7 @@ function parseOldList(bugs) {
   document.getElementById("oldBugs").removeAttribute("notloaded");
 }
 
+// This is the incoming list of untriaged or triage:followup bugs
 function parseTriageList(bugs) {
   var color = d3.scale.category20();
 
@@ -215,6 +218,7 @@ function parseTriageList(bugs) {
   document.getElementById("triageBreakdown").removeAttribute("notloaded");
 }
 
+// This is the incoming information for the bug breakdown by assignee and status
 function assigneeBreakdownFixed(data) {
   var color = d3.scale.category20b();
 
@@ -272,7 +276,7 @@ function assigneeBreakdownFixed(data) {
       yHeader.setAttribute("email", yHeads[i]);
       yHeader.setAttribute("title", yHeads[i]);
       tablerows[i].appendChild(yHeader);
-      if(authenticated && yHeader.innerHTML != "UNASSIGNED") {
+      if(authenticated && yHeader.innerHTML != "UNASSIGNED" && yHeader.innerHTML.search("@") > 0) {
         getUserName(yHeader, "https://api-dev.bugzilla.mozilla.org/latest/user/" + yHeads[i]);
       }
 
@@ -351,7 +355,7 @@ function assigneeBreakdownFixed(data) {
   return data;
 }
 
-// This is the incoming information for the bug breakdown by status and milestone
+// This is the incoming information for the bug breakdown by priority and status
 function priorityBreakdownFixed(data) {
     // These are the rows in the breakdown table
     var tablerows = document.getElementById("priorityTable")
@@ -478,7 +482,7 @@ function priorityBreakdownFixed(data) {
 }
 
 // This is the incoming information for the bug breakdown by status and milestone
-function breakdownFixed(data) {
+function statusBreakdownFixed(data) {
     // These are the rows in the breakdown table
     var tablerows = document.getElementById("breakdownTable")
                             .getElementsByTagName("tbody")[0]

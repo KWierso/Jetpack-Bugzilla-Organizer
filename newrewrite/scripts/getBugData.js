@@ -1,3 +1,7 @@
+/*
+ * This will fetch a list of all open bugs with attachments that
+ * have at least one pending request. This takes a really long time!
+ */
 function getAttachments() {
   var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---" +
                           "&include_fields=id,summary,attachments";
@@ -76,7 +80,10 @@ function getAttachments() {
   request.send(null);
 }
 
-// initiate xhr to get old bug data, pass it to d3.js
+/*
+ * This fetches a list of open bugs that have had no activity
+ * for at least one month.
+ */
 function getOldList() {
   var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---&changed_before=" +
                 "672h&include_fields=id,assigned_to,summary,last_change_time";
@@ -101,7 +108,10 @@ function getOldList() {
   request.send(null);
 }
 
-// initiate xhr to get triage data, pass it to d3.js
+/*
+ * This fetches a list of open bugs that have no priority set
+ * and/or has the [triage:followup] whiteboard entry.
+ */
 function getTriageList() {
   var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---&priority=--" +
                 "&include_fields=id,whiteboard,summary";
@@ -124,7 +134,10 @@ function getTriageList() {
   request.send(null);
 }
 
-// initiate xhr to get breakdown data, pass it to d3.js
+/*
+ * This fetches a breakdown of open bugs by assignee
+ * and bug status, with totals for each assignee.
+ */
 function getAssigneeBreakdown() {
   if(authenticated) {
     var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=" +
@@ -153,7 +166,10 @@ function getAssigneeBreakdown() {
   request.send(null);
 }
 
-// initiate xhr to get breakdown data, pass it to d3.js
+/*
+ * This fetches a breakdown of open bugs by priority and bug status,
+ * with a pie chart visualizing the breakdown.
+ */
 function getPriorityBreakdown() {
   var someURL = apiRoot + "count?product=" + apiProduct + "&y_axis_field=priority&" +
                 "x_axis_field=status&status=NEW&status=ASSIGNED&status=" +
@@ -176,9 +192,13 @@ function getPriorityBreakdown() {
   request.send(null);
 }
 
-// initiate xhr to get breakdown data, pass it to d3.js
-function getBreakdown() {
-  var someURL = apiRoot + "count?product=" + apiProduct + "&x_axis_field=target_milestone&" +
+/*
+ * This fetches a breakdown of open bugs by bug status and target milestone,
+ * with a pie chart visualizing the breakdown.
+ */
+function getStatusBreakdown() {
+  var someURL = apiRoot + "count?product=" + apiProduct +
+                "&x_axis_field=target_milestone&" +
                 "y_axis_field=status&status=NEW&status=ASSIGNED&status=" +
                 "UNCONFIRMED&status=REOPENED";
 
@@ -189,7 +209,7 @@ function getBreakdown() {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        breakdownFixed(JSON.parse(request.response));
+        statusBreakdownFixed(JSON.parse(request.response));
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
         document.body.removeAttribute("activeRequests");
