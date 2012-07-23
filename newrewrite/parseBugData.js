@@ -400,6 +400,26 @@ function priorityBreakdownFixed(data) {
         var yHeader = document.createElement("td");
         yHeader.innerHTML = yHeads[i];
         yHeader.className = "first";
+        switch(yHeader.innerHTML) {
+          case "--":
+            yHeader.setAttribute("title", "Untriaged bugs");
+          break;
+          case "P1":
+            yHeader.setAttribute("title", "\"Need it\" bugs");
+          break;
+          case "P2":
+            yHeader.setAttribute("title", "\"Want it\" bugs");
+          break;
+          case "P3":
+            yHeader.setAttribute("title", "\"Nice to have it\" bugs");
+          break;
+          case "P4":
+            yHeader.setAttribute("title", "Tracking/Meta bugs");
+          break;
+          case "P5":
+            yHeader.setAttribute("title", "Developers' personal tracking bugs");
+          break;
+        }
         tablerows[i].appendChild(yHeader);
         yHeader.addEventListener("click", function(evt) {
           var priority = evt.target.innerHTML;
