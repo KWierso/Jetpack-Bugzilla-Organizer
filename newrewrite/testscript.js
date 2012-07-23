@@ -161,8 +161,11 @@ function parseAttachmentList(open, accepted, denied) {
           thisCell.textContent = open[i].description;
           thisCell.title = open[i].description;
           thisCell.addEventListener("click", function(evt) {
-            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" +
-                        evt.target.parentNode.getAttribute("attachmentref"));
+            var parent = evt.target.parentNode;
+            var bugid = parent.firstChild.textContent;
+            var attachmentid = parent.getAttribute("attachmentid");
+
+            window.open("https://bug" + bugid + ".bugzilla.mozilla.org/attachment.cgi?id=" + attachmentid);
           }, false);
         break;
 
@@ -173,8 +176,11 @@ function parseAttachmentList(open, accepted, denied) {
           thisFlag.title = thisFlag.textContent;
           thisCell.appendChild(thisFlag);
           thisCell.addEventListener("click", function(evt) {
-            window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" +
-                        evt.target.parentNode.getAttribute("attachmentref"));
+            var parent = evt.target.parentNode;
+            var bugid = parent.firstChild.textContent;
+            var attachmentid = parent.getAttribute("attachmentid");
+
+            window.open("https://bug" + bugid + ".bugzilla.mozilla.org/attachment.cgi?id=" + attachmentid);
           }, false);
         break;
 
