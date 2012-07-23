@@ -1,8 +1,8 @@
-var breakdowntrs;
 var authenticated = false;
 var auth = {"id":"", "cookie":""}
 
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
+
 // Latest official
 var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
 

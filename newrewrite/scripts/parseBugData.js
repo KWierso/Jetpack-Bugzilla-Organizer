@@ -232,7 +232,7 @@ function assigneeBreakdownFixed(data) {
     document.getElementById("zarroBoogs").removeAttribute("unneeded");
   } else {
     // Use d3.js to add a row for each set of data
-    breakdowntrs = d3.select("#assigneeCounts").select("tbody").selectAll("tr")
+    d3.select("#assigneeCounts").select("tbody").selectAll("tr")
             .data(counts)
           .enter().append("tr")
           .attr("counts", function(d) { return d; });
@@ -372,7 +372,7 @@ function priorityBreakdownFixed(data) {
       document.getElementById("zarroBoogs").removeAttribute("unneeded");
     } else {
       // Use d3.js to add a row for each set of data
-      breakdowntrs = d3.select("#priorityTable").select("tbody").selectAll("tr")
+      d3.select("#priorityTable").select("tbody").selectAll("tr")
               .data(counts)
             .enter().append("tr")
             .attr("counts", function(d) { return d; });
@@ -498,7 +498,7 @@ function breakdownFixed(data) {
       document.getElementById("zarroBoogs").removeAttribute("unneeded");
     } else {
       // Use d3.js to add a row for each set of data
-      breakdowntrs = d3.select("#breakdownTable").select("tbody").selectAll("tr")
+      d3.select("#breakdownTable").select("tbody").selectAll("tr")
               .data(counts)
             .enter().append("tr")
             .attr("counts", function(d) { return d; });
