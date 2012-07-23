@@ -269,6 +269,9 @@ function addToggles() {
 function getOldList() {
   var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---&changed_before=" +
                 "672h&include_fields=id,assigned_to,summary,last_change_time";
+  if(authenticated) {
+    someURL = someURL + "&userid=" + auth.id + "&cookie=" + auth.cookie;
+  }
 
   var request = new XMLHttpRequest();
   request.open('GET', someURL, true);
@@ -313,7 +316,11 @@ function parseOldList(bugs) {
         bugCell.setAttribute("title", bugs[i][headers[j]]);
       }
       if(headers[j] == "assigned_to") {
-        bugCell.textContent = bugs[i][headers[j]].name == "nobody" ? "" : bugs[i][headers[j]].name;
+        bugCell.textContent = bugs[i][headers[j]].name == "nobody" || bugs[i][headers[j]].name == "nobody@mozilla.org" ? "" : bugs[i][headers[j]].name;
+        if(authenticated && bugCell.innerHTML != "") {
+          bugCell.setAttribute("title", bugCell.textContent);
+          getUserName(bugCell, "https://api-dev.bugzilla.mozilla.org/latest/user/" + bugCell.textContent);
+        }
       }
       bugCell.setAttribute("style", "background: " + color(i) + ";");
       bugRow.appendChild(bugCell);
@@ -635,7 +642,14 @@ function getUserName(header, userURI) {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        header.textContent = JSON.parse(request.response).real_name
+        var name = JSON.parse(request.response).real_name;
+        header.textContent = name.split("[")[0].split("(")[0];
+        if(name.search(/\[:(.*?)\]/gi) > -1) {
+          header.setAttribute("title", header.getAttribute("title") + " " + name.match(/\[:(.*?)\]/gi));
+        }
+        if(name.search(/\(:(.*?)\)/gi) > -1) {
+          header.setAttribute("title", header.getAttribute("title") + " " + name.match(/\(:(.*?)\)/gi));
+        }
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
 

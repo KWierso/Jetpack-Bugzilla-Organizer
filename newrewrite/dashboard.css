@@ -208,7 +208,7 @@ tr:hover, tr:hover td {
 }
 
 #oldBugs table td:nth-child(2), #oldBugs table th:nth-child(2) {
-  width: 20%!important;
+  width: 25%!important;
 }
 
 #triageExtras, #oldTotalCount {
