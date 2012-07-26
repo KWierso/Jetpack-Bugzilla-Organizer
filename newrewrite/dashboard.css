@@ -81,18 +81,18 @@ body > div {
 #assigneeCounts > table {
   margin-left:auto;
   margin-right:auto;
-  width:700px!important;
+  width:700px;
 }
 
 #assigneeCounts > table  td:first-child {
-  width: 400px!important;
-  min-width: 400px!important;
-  overflow: hidden!important;
+  width: 400px;
+  min-width: 400px;
+  overflow: hidden;
 }
 #assigneeCounts > table  td:not(:first-child) {
-  width: 70px!important;
-  min-width: 70px!important;
-  overflow: hidden!important;
+  width: 70px;
+  min-width: 70px;
+  overflow: hidden;
 }
 
 table td:nth-child(1) {
@@ -197,17 +197,17 @@ tr:hover, tr:hover td {
   overflow:hidden!important;
 }
 
-#triageBreakdown table td:nth-child(1), #triageBreakdown table th:nth-child(1),
-#triageBreakdown table td:nth-child(2), #triageBreakdown table th:nth-child(2){
-  width: 10%!important;
+#triageTable td:nth-child(1), #triageTable th:nth-child(1),
+#triageTable td:nth-child(2), #triageTable th:nth-child(2){
+  width: 10%;
 }
 
 #oldBugs table td:nth-child(1), #oldBugs table th:nth-child(1) {
-  width: 10%!important;
+  width: 10%;
 }
 
 #oldBugs table td:nth-child(2), #oldBugs table th:nth-child(2) {
-  width: 25%!important;
+  width: 25%;
 }
 
 #triageExtras, #oldTotalCount {
@@ -259,4 +259,85 @@ div[showing=false] :not(.toggle):not(h3){
   overflow: hidden!important;
   text-overflow: ellipsis !important;
   white-space:nowrap;
+}
+
+@media screen and (min-width: 600px) {
+
+}
+
+
+
+
+@media screen and (max-width: 480px) {
+  body {
+    background:red!important;
+  }
+  
+  body > div {
+    margin-left:0px!important;
+    margin-right:0px!important;
+  }
+  
+  #assigneeTable, #attachmentTable, #triageTable, #oldBugTable {
+   width:445px!important;
+  }
+  #assigneeCounts, #triageBreakdown, #oldBugs, #priority, #breakdown, #attachments {
+    width:449px!important;
+    min-width:449px!important;
+    max-width:449px!important;
+  }
+  
+  #assigneeTable  td:nth-child(2),#assigneeTable  th:nth-child(2),
+  #assigneeTable  td:nth-child(3),#assigneeTable  th:nth-child(3),
+  #assigneeTable  td:nth-child(4),#assigneeTable  th:nth-child(4),
+  #assigneeTable  td:nth-child(5),#assigneeTable  th:nth-child(5)  {
+    display:none!important;
+  }
+  
+  #assigneeTable  td:nth-child(1),#assigneeTable  th:nth-child(1) {
+    width: 200px!important;
+    min-width: 200px!important;
+    max-width: 200px!important;
+  }
+  
+  #assigneeTable  td:nth-child(6),#assigneeTable  th:nth-child(6) {
+    width: 50px!important;
+    min-width: 50px!important;
+    max-width: 50px!important;
+  }
+  
+  #priorityTable th {
+    overflow: hidden!important;
+    text-overflow: ellipsis !important;
+    white-space:nowrap!important;
+    max-width:130px!important
+  }
+  
+  #priority svg, #breakdown svg, 
+  #triageTable td:nth-child(2), #triageTable th:nth-child(2),
+  #attachmentTable td:nth-child(2), #attachmentTable th:nth-child(2),
+  #oldBugTable td:nth-child(2), #oldBugTable th:nth-child(2) {
+    display:none!important;
+    width:0px!important;
+  }
+  
+  #attachmentTable td:nth-child(1), #attachmentTable th:nth-child(1) {
+    width: 50px!important;
+    min-width: 50px!important;
+    max-width: 50px!important;
+  }
+  
+  #attachmentTable td:nth-child(3), #attachmentTable th:nth-child(3),
+  #oldBugTable td:nth-child(3), #oldBugTable th:nth-child(3) {
+    width: 320px!important;
+    min-width: 320px!important;
+    max-width: 320px!important;
+  }
+  
+  #triageTable td:nth-child(1), #triageTable th:nth-child(1),
+  #oldBugTable td:nth-child(1), #oldBugTable th:nth-child(1) {
+    width: 60px!important;
+    min-width: 60px!important;
+    max-width: 60px!important;
+  }
 }
