@@ -261,14 +261,14 @@ div[showing=false] :not(.toggle):not(h3){
   white-space:nowrap;
 }
 
-@media screen and (min-width: 600px) {
+@media all and (min-width: 600px) {
 
 }
 
 
 
 
-@media screen and (max-width: 480px) {
+@media all and (max-width: 480px) {
   body {
     background:red!important;
   }
