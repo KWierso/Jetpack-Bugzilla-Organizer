@@ -145,14 +145,6 @@ th {
 #piemilestone, #piepriority {
   float:right;
 }
-#piemilestone[selectedStatus] g:not([selectedStatus]),
-  #piepriority[selectedStatus] g:not([selectedStatus]) {
-  opacity:0.3;
-}
-#breakdownTable[selectedStatus] tr:not([selectedStatus]),
-  #priorityTable[selectedStatus] tr:not([selectedStatus]) {
-  opacity:0.3;
-}
 
 #milestone td, #patches td {
     min-width: 50px;
@@ -262,15 +254,27 @@ div[showing=false] :not(.toggle):not(h3){
 }
 
 @media all and (min-width: 600px) {
-
+  #piemilestone[selectedStatus] g:not([selectedStatus]),
+    #piepriority[selectedStatus] g:not([selectedStatus]) {
+    opacity:0.3;
+  }
+  #breakdownTable[selectedStatus] tr:not([selectedStatus]),
+    #priorityTable[selectedStatus] tr:not([selectedStatus]) {
+    opacity:0.3;
+  }
 }
 
 
 
 
-@media all and (max-width: 480px) {
+@media all and (max-device-width: 480px), (max-width:480px) {
   body {
-    background:red!important;
+    background:black!important;
+    color: white!important;
+  }
+  
+  * {
+    border-color:white!important;
   }
   
   body > div {
