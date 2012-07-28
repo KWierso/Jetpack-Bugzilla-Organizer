@@ -22,29 +22,43 @@ function getAttachments() {
     if (request.readyState == 4) {
       if(request.status == 200) {
         var bugs = JSON.parse(request.response).bugs;
-        for each(var bug in bugs) {
-          if(bug.attachments) {
-            for each (var attachment in bug.attachments) {
-              if(attachment) {
-                if(attachment.flags) {
-                  for each(var flag in attachment.flags) {
+        //for each(var bug in bugs) {
+        for (i in bugs) {
+          if(bugs[i].attachments) {
+            //for each (var attachment in bug.attachments) {
+            for (j in bugs[i].attachments) {
+              if(bugs[i].attachments[j]) {
+                if(bugs[i].attachments[j].flags) {
+                  //for each(var flag in attachment.flags) {
+                  for (k in bugs[i].attachments[j].flags) {
                     var item = {
-                      bug: bug.id,
-                      summary: bug.summary,
-                      attachmentID: attachment.id,
-                      description: attachment.description,
-                      attacher: attachment.attacher.name,
-                      attachmentRef:attachment.ref,
-                      flagName: flag.name,
-                      flagStatus: flag.status,
-                      flagSetter: flag.setter.name,
+                      bug: bugs[i].id,
+                      summary: bugs[i].summary,
+                      attachmentID: bugs[i].attachments[j].id,
+                      description: bugs[i].attachments[j].description,
+                      attacher: bugs[i].attachments[j].attacher.name,
+                      attachmentRef:bugs[i].attachments[j].ref,
+                      flagName: bugs[i].attachments[j].flags[k].name,
+                      flagStatus: bugs[i].attachments[j].flags[k].status,
+                      flagSetter: bugs[i].attachments[j].flags[k].setter.name,
                       flagRequestee: ""
                     }
                     if(item.flagStatus == "?") {
-                      item.flagRequestee = flag.requestee.name;
+                      item.flagRequestee = bugs[i].attachments[j].flags[k].requestee.name;
                     }
+                    
                     switch(item.flagStatus) {
                       case "?":
+                        // alert(item.bug);
+                        // alert(item.summary);
+                        // alert(item.attachmentID);
+                        // alert(item.description);
+                        // alert(item.attacher);
+                        // alert(item.attachmentRef);
+                        // alert(item.flagName);
+                        // alert(item.flagStatus);
+                        // alert(item.flagSetter);
+                        // alert(item.flagRequestee);
                         openRequests.push(item);
                       break;
 

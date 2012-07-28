@@ -12,13 +12,15 @@ function parseAttachmentList(open, accepted, denied) {
     header.innerHTML = headers[i];
     thead.appendChild(header);
   }
-  for(i in open) {
-    var existingRow = getExistingRow(open[i].attachmentID, tbody);
+  for(var i in open) {
+  //console.debug(open[i]);
+    var attachmentID = open[i]["attachmentID"];
+    var existingRow = getExistingRow(open[i]["attachmentID"], tbody);
     if(existingRow) { alert(existingRow); }
     var thisRow = document.createElement("tr");
-    thisRow.setAttribute("attachmentid", open[i].attachmentID);
-    thisRow.setAttribute("attachmentref", open[i].attachmentRef);
-    for(j in headers) {
+    thisRow.setAttribute("attachmentid", open[i]["attachmentID"]);
+    thisRow.setAttribute("attachmentref", open[i]["attachmentRef"]);
+    for(var j in headers) {
       var thisCell = document.createElement("td");
       switch(j) {
         case "0":
@@ -64,7 +66,7 @@ function parseAttachmentList(open, accepted, denied) {
     tbody.appendChild(thisRow);
   }
 
-  for(i in accepted) {
+  for(var i in accepted) {
     var existingRow = getExistingRow(accepted[i].attachmentID, tbody);
     if(existingRow) {
       var cell = existingRow.getElementsByTagName("td");
@@ -77,7 +79,7 @@ function parseAttachmentList(open, accepted, denied) {
     }
   }
 
-  for(i in denied) {
+  for(var i in denied) {
     var existingRow = getExistingRow(denied[i].attachmentID, tbody);
     if(existingRow) {
       var cell = existingRow.getElementsByTagName("td");

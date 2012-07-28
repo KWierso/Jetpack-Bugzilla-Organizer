@@ -162,10 +162,12 @@ function addToggles() {
 // Used when there are multiple patches for a single bug.
 function getExistingRow(ID, tbody) {
   var row;
-  for each(var tr in tbody.getElementsByTagName("tr")) {
+  var trs = tbody.getElementsByTagName("tr");
+  //for each(var tr in tbody.getElementsByTagName("tr")) {
+  for (i in trs) {
     try {
-      if(tr.getAttribute("attachmentid") == ID) {
-        row = tr;
+      if(trs[i].getAttribute("attachmentid") == ID) {
+        row = trs[i];
       }
     } catch(e) {}
   }
