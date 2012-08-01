@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../resources/d3.js"></script>
+    <script type="text/javascript" src="../resources/d3.layout.js"></script>
+    <script type="text/javascript" src="scripts/runscripts.js" defer="defer"></script>
+    <script type="text/javascript" src="scripts/parseBugData.js"></script>
+    <script type="text/javascript" src="scripts/getBugData.js"></script>
+    <script type="text/javascript" src="scripts/helper.js"></script>
+  </head>
+<body>
+<div id="wrapper">
+  <h1>Jetpack Bugzilla Dashboard</h1>
+  <div id="tabContainer">
+    <div class="tabs">
+      <ul>
+        <li id="tabHeader_1">Assignee</li>
+        <li id="tabHeader_2">Priority</li>
+        <li id="tabHeader_3">Status</li>
+        <li id="tabHeader_4">Attachments</li>
+        <li id="tabHeader_5">Triage</li>
+        <li id="tabHeader_6">Old</li>
+      </ul>
+    </div>
+    <div class="tabscontent">
+      <div class="tabpage" id="tabpage_1">
+        <h2>Bugs by Assignee/Status</h2>
+        <div notloaded="true" id="assigneeCounts" showing="true">
+          <div class="toggle"></div>
+          <img src="../resources/rotate.gif"/></h3>
+          <table id="assigneeTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tabpage" id="tabpage_2">
+        <h2>Bugs by Priority/Status</h2>
+        <div notloaded="true" id="priority" showing="true">
+          <div class="toggle"></div>
+          <img src="../resources/rotate.gif"/></h3>
+          <table id="priorityTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tabpage" id="tabpage_3">
+        <h2>Bugs by Status/Milestone</h2>
+        <div notloaded="true" id="breakdown" showing="true">
+          <div class="toggle"></div>
+          <h3>Bugs by Status/Milestone</h3>
+          <img src="../resources/rotate.gif"/></h3>
+          <table id="breakdownTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tabpage" id="tabpage_4">
+        <h2>Attachments (this can take a while)</h2>
+        <div notloaded="true" id="attachments" showing="true">
+          <div class="toggle"></div>
+          <img src="../resources/rotate.gif"/></h3>
+          <table id="attachmentTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tabpage" id="tabpage_5">
+        <h2>Triage List</h2>
+        <div notloaded="true" id="triageBreakdown" showing="true">
+          <div class="toggle"></div>
+          <img src="../resources/rotate.gif"/></h3>
+          <div id="triageExtras">
+            <input type="button" value="Open All in tabs" id="openAllTriage"/>
+            <p id="triageFollowupCount">Followups: <span></span></p>
+            <p id="triageTotalCount">Total: <span></span></p>
+          </div>
+          <table id="triageTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tabpage" id="tabpage_6">
+        <h2>Bugs untouched for one month</h2>
+        <div notloaded="true" id="oldBugs" showing="true">
+          <div class="toggle"></div>
+          <img src="../resources/rotate.gif"/></h3>
+          <p id="oldTotalCount">Total: <span></span></p>
+          <p id="oldAssignedCount">Assigned: <span></span></p>
+          <p id="oldUnassignedCount">Unassigned: <span></span></p>
+          <table id="oldBugTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<script src="tabs.js"></script>
+</body>
+</html>

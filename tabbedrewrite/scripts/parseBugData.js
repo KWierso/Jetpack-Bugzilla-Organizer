@@ -1,5 +1,5 @@
 // This is the incoming list of bugs/attachments with pending requests
-function parseAttachmentList(open, accepted, denied) {
+ function parseAttachmentList(open, accepted, denied) {
   var color = d3.scale.category20();
 
   var attachmentTable = document.getElementById("attachmentTable");
