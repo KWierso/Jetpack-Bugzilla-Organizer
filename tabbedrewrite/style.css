@@ -94,3 +94,32 @@ h2{
 	margin:0;
 	color:#333;
 }
+
+
+
+
+
+.pie {
+  float:right;
+}
+
+th:not(:first-child) {
+    border: 1px dashed black;
+}
+
+td:first-child {
+    border: 1px dashed black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+td:not(:first-child) {
+    border: 1px solid black;
+    cursor:pointer;
+}
+
+
+table {
+    word-wrap:break-word;
+    table-layout:fixed;
+}

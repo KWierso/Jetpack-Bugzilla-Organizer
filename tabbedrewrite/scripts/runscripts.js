@@ -14,29 +14,6 @@ var apiRoot = "https://api-dev.bugzilla.mozilla.org/latest/";
 // Want to use this dashboard for a different product in Bugzilla? Change this!
 var apiProduct = "Add-on%20SDK";
 
-// Hide parts of the page based on the URL's query string
-var query = window.location.search.substring(1);
-switch(query) {
-  case "triage":
-    
-    break;
-
-  case "assignee":
-    break;
-
-  case "priority":
-    break;
-
-  case "status":
-    break;
-
-  case "old":
-    break;
-
-  case "attachments":
-    break;
-}
-
 // Wait for a bit to allow the addon to give us the user's bugzilla credentials
 window.setTimeout(waitForAddon, 2000, true);
 
@@ -52,11 +29,6 @@ function waitForAddon() {
   getTriageList();
   getOldList();
   getAttachments();
-
-  // Add +/- toggle switches to show/hide each section of the page
-  addToggles();
-
-  document.body.removeAttribute("initial");
 }
 
 // The addon will stick the credentials into an element on the page,

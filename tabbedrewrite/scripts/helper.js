@@ -66,7 +66,8 @@ function pie(data, status, target) {
         .data([data])
         .attr("id", "pie" + target)
         .attr("width", w)
-        .attr("height", h);
+        .attr("height", h)
+        .attr("class", "pie");
 
     var arcs = vis.selectAll("g.arc")
         .data(donut)
@@ -110,6 +111,10 @@ function pie(data, status, target) {
         pieClick(e.originalTarget, target);
       }, false);
     }
+    
+    d3.select(myTarget)
+      .append("div")
+      .attr("style", "clear:both;");
 }
 
 // Look up a user's information from Bugzilla,
@@ -136,26 +141,6 @@ function getUserName(header, userURI) {
     }
   };
   request.send(null);
-}
-
-// Add +/- toggle button to each section of the page
-function addToggles() {
-  var divs = document.getElementsByTagName("div");
-  for(i in divs) {
-    if(divs[i].className == "toggle") {
-      divs[i].addEventListener("click", function(evt) {
-        var target = evt.target.parentNode;
-        switch(target.getAttribute("showing")) {
-          case "true":
-            target.setAttribute("showing", "false");
-            break;
-          case "false":
-            target.setAttribute("showing", "true");
-            break;
-        }
-      }, false);
-    }
-  }
 }
 
 // For a given attachment ID, see if an existing row already exists.
