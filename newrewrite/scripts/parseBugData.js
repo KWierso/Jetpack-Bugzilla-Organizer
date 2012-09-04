@@ -19,10 +19,9 @@ function parseAttachmentList(open, accepted, denied) {
     thead.appendChild(header);
   }
   for(var i in open) {
-  //console.debug(open[i]);
     var attachmentID = open[i]["attachmentID"];
     var existingRow = getExistingRow(open[i]["attachmentID"], tbody);
-    if(existingRow) { alert(existingRow); }
+//    if(existingRow) { alert(existingRow); }
     var thisRow = document.createElement("tr");
     thisRow.setAttribute("attachmentid", open[i]["attachmentID"]);
     thisRow.setAttribute("attachmentref", open[i]["attachmentRef"]);
