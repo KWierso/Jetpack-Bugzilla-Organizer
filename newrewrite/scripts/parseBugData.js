@@ -6,6 +6,12 @@ function parseAttachmentList(open, accepted, denied) {
   var thead = attachmentTable.getElementsByTagName("thead")[0];
   var tbody = attachmentTable.getElementsByTagName("tbody")[0];
 
+  var users = [];
+  var setterExists;
+  var setterIndex;
+  var requesteeExists;
+  var requesteeIndex;
+
   var headers = ["Bug ID", "Attachment Description", "Flags"];
   for(i in headers) {
     var header = document.createElement("th");
@@ -56,6 +62,44 @@ function parseAttachmentList(open, accepted, denied) {
 
             window.open("https://bug" + bugid + ".bugzilla.mozilla.org/attachment.cgi?id=" + attachmentid);
           }, false);
+
+          setterExists = false;
+          setterIndex;
+          for(let k in users) {
+            if(users[k].name == open[i].flagSetter) {
+              setterExists = true;
+              setterIndex = k;
+              break;
+            }
+          }
+          if(setterExists) {
+            users[setterIndex].setterCount = users[setterIndex].setterCount + 1;
+          } else {
+            let newuser = { }
+            newuser.name = open[i].flagSetter;
+            newuser.setterCount = 1;
+            newuser.requesteeCount = 0;
+            users.push(newuser);
+          }
+
+          requesteeExists = false;
+          requesteeIndex;
+          for(let k in users) {
+            if(users[k].name == open[i].flagRequestee) {
+              requesteeExists = true;
+              requesteeIndex = k;
+              break;
+            }
+          }
+          if(requesteeExists) {
+            users[requesteeIndex].requesteeCount = users[requesteeIndex].requesteeCount + 1;
+          } else {
+            let newuser = { }
+            newuser.name = open[i].flagRequestee;
+            newuser.requesteeCount = 1;
+            newuser.setterCount = 0;
+            users.push(newuser);
+          }
         break;
 
         default:
@@ -64,6 +108,22 @@ function parseAttachmentList(open, accepted, denied) {
       thisRow.appendChild(thisCell);
     }
     tbody.appendChild(thisRow);
+  }
+
+  let assigneeRows = document.getElementById("assigneeTable").getElementsByTagName("tr");
+  for(j in users) {
+    for(k in assigneeRows) {
+      let thisTd = assigneeRows[k].firstElementChild;
+      if(thisTd) {
+        if(thisTd.textContent == users[j].name) {
+          thisTd.title = users[j].name + ":\nIs waiting for " + users[j].setterCount +
+                         " review/feedback requests and \n" +
+                         "Needs to provide review/feedback for " + users[j].requesteeCount + 
+                         " attachments";
+          break;
+        }
+      }
+    }
   }
 
   for(var i in accepted) {
