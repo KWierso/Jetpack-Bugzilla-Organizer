@@ -7,6 +7,13 @@ function openAllTriage() {
   }
 }
 
+function openAllNeedInfo() {
+  var list = document.getElementById("needInfoTable").getElementsByTagName("tr");
+  for(i in list) {
+    window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + list[i].firstChild.textContent);
+  }
+}
+
 // When a piece of the pie chart is clicked, 
 // highlight the corresponding row in the table.
 function pieClick(tgt, type) {

@@ -56,11 +56,15 @@
 
     <div style="clear:both;"></div>
 
-    <div notloaded="true" id="attachments" showing="true">
+    <div notloaded="true" id="needInfoBreakdown" showing="true">
       <div class="toggle"></div>
-      <h3>Attachments (this can take a while)</h3>
+      <h3>NeedInfo List</h3>
       <img src="../resources/rotate.gif"/>
-      <table id="attachmentTable">
+      <div id="needInfoExtras">
+        <input type="button" value="Open All in tabs" id="openAllNeedInfo"/>
+        <p id="needInfoCount">Total: <span></span></p>
+      </div>
+      <table id="needInfoTable">
         <thead></thead>
         <tbody></tbody>
       </table>
@@ -80,6 +84,17 @@
         <tbody></tbody>
       </table>
     </div>
+
+    <div notloaded="true" id="attachments" showing="true">
+      <div class="toggle"></div>
+      <h3>Attachments (this can take a while)</h3>
+      <img src="../resources/rotate.gif"/>
+      <table id="attachmentTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
 
     <div notloaded="true" id="oldBugs" showing="true">
       <div class="toggle"></div>

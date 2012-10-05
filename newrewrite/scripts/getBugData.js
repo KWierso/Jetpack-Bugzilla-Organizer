@@ -137,8 +137,33 @@ function getTriageList() {
   request.onreadystatechange = function (aEvt) {
     if (request.readyState == 4) {
       if(request.status == 200) {
-        //assigneeBreakdownFixed(JSON.parse(request.response));
         parseTriageList(JSON.parse(request.response).bugs);
+      } else {
+        alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
+      }
+    }
+  };
+  request.send(null);
+}
+
+/*
+ *Similar to the triage list, this fetches a list of all
+ * open bugs that have the needinfo flag set.
+ */
+function getNeedInfoList() {
+  var someURL = apiRoot + "bug?field0-0-0=flagtypes.name;" +
+                "type0-0-0=casesubstring;value0-0-0=needinfo%3F;" +
+                "product=Add-on%20SDK&resolution=---&include_fields=id,summary,whiteboard,flags";
+
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+      if(request.status == 200) {
+        parseNeedInfoList(JSON.parse(request.response).bugs);
       } else {
         alert("Something with the request went wrong. Request status: " + request.status);
         document.body.removeAttribute("activeRequests");

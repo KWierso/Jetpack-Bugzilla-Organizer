@@ -3,6 +3,7 @@ var authenticated = false;
 var auth = {"id":"", "cookie":""}
 
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
+document.getElementById("openAllNeedInfo").addEventListener("click", openAllNeedInfo, false);
 
 // Change this to use a different version of the REST API
 // Latest official
@@ -55,6 +56,7 @@ function waitForAddon() {
   getStatusBreakdown();
   getPriorityBreakdown();
   getTriageList();
+  getNeedInfoList();
   getOldList();
   getAttachments();
 

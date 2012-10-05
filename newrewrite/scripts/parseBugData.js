@@ -284,6 +284,64 @@ function parseTriageList(bugs) {
   document.getElementById("triageBreakdown").removeAttribute("notloaded");
 }
 
+// This is the incoming list of bugs with 'needinfo' set
+function parseNeedInfoList(bugs) {
+  var color = d3.scale.category20();
+
+  var needInfoTable = document.getElementById("needInfoTable");
+  var thead = needInfoTable.getElementsByTagName("thead")[0];
+  var tbody = needInfoTable.getElementsByTagName("tbody")[0];
+
+  var needinfo = 0;
+
+  bugs = bugs.sort(function(a,b) { return a.id > b.id; });
+
+  var headers = ["id", "needinfo", "summary"];
+  for(i in headers) {
+    var header = document.createElement("th");
+    header.innerHTML = headers[i];
+    thead.appendChild(header);
+  }
+  for(i in bugs) {
+    var bugRow = document.createElement("tr");
+    for(j in headers) {
+      var bugCell = document.createElement("td");
+      if(headers[j] != "needinfo") {
+        bugCell.textContent = bugs[i][headers[j]];
+        if(headers[j] == "summary") {
+          bugCell.setAttribute("title", bugs[i][headers[j]]);
+        }
+      } else {
+        if(bugs[i].flags) {
+          for(j in bugs[i].flags) {
+            if(bugs[i].flags[j].name == "needinfo") {
+              bugCell.textContent = bugs[i].flags[j].setter.name + "?" + bugs[i].flags[j].requestee.name;
+              needinfo = needinfo + 1;
+            }
+          }
+        }
+      }
+      bugCell.setAttribute("style", "background: " + color(i) + ";");
+      bugRow.appendChild(bugCell);
+    }
+    bugRow.addEventListener("click", function(evt) {
+      var tgt = evt.target;
+      while(tgt.tagName != "TR") {
+        tgt = tgt.parentNode;
+      }
+      tgt = tgt.firstChild.textContent;
+      window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + tgt);
+    }, false);
+
+    tbody.appendChild(bugRow);
+  }
+
+  document.getElementById("needInfoCount")
+          .getElementsByTagName("span")[0].textContent = needinfo;
+
+  document.getElementById("needInfoBreakdown").removeAttribute("notloaded");
+}
+
 // This is the incoming information for the bug breakdown by assignee and status
 function assigneeBreakdownFixed(data) {
   var color = d3.scale.category20b();
