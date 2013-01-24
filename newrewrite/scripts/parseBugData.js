@@ -295,7 +295,7 @@ function parseGitbotList(bugs) {
   var total = 0;
   var followup = 0;
 
-  bugs = bugs.sort(function(a,b) { return a.id > b.id; });
+  bugs = bugs.sort(function(a,b) { return a.last_change_time.split("T")[0] > b.last_change_time.split("T")[0]; });
 
   var headers = ["id", "Last Changed", "summary"];
   for(i in headers) {
