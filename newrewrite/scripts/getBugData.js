@@ -148,6 +148,31 @@ function getTriageList() {
 }
 
 /*
+ * This fetches a list of open bugs that have been commented in by the Github Robot.
+ */
+function getGitbotList() {
+  var someURL = apiRoot + "bug?product=" + apiProduct + "&resolution=---" +
+                "&email1=mozilla%2Bbugcloser%40davedash.com&email1_comment_creator=1" + 
+                "&email1_type=equals&include_fields=id,last_change_time,summary";
+
+  var request = new XMLHttpRequest();
+  request.open('GET', someURL, true);
+  request.setRequestHeader("Accept", "application/json");
+  request.setRequestHeader("Content-Type", "application/json");
+  request.onreadystatechange = function (aEvt) {
+    if (request.readyState == 4) {
+      if(request.status == 200) {
+        parseGitbotList(JSON.parse(request.response).bugs);
+      } else {
+        alert("Something with the request went wrong. Request status: " + request.status);
+        document.body.removeAttribute("activeRequests");
+      }
+    }
+  };
+  request.send(null);
+}
+
+/*
  *Similar to the triage list, this fetches a list of all
  * open bugs that have the needinfo flag set.
  */

@@ -284,6 +284,61 @@ function parseTriageList(bugs) {
   document.getElementById("triageBreakdown").removeAttribute("notloaded");
 }
 
+// This is the incoming list of bugs Gitbot has commented in
+function parseGitbotList(bugs) {
+  var color = d3.scale.category20();
+
+  var gitbotTable = document.getElementById("OpenGitbotTable");
+  var thead = gitbotTable.getElementsByTagName("thead")[0];
+  var tbody = gitbotTable.getElementsByTagName("tbody")[0];
+
+  var total = 0;
+  var followup = 0;
+
+  bugs = bugs.sort(function(a,b) { return a.id > b.id; });
+
+  var headers = ["id", "Last Changed", "summary"];
+  for(i in headers) {
+    var header = document.createElement("th");
+    header.innerHTML = headers[i];
+    thead.appendChild(header);
+  }
+  for(i in bugs) {
+    var bugRow = document.createElement("tr");
+    for(j in headers) {
+      var bugCell = document.createElement("td");
+      if(headers[j] != "Last Changed") {
+        bugCell.textContent = bugs[i][headers[j]];
+        if(headers[j] == "summary") {
+          bugCell.setAttribute("title", bugs[i][headers[j]]);
+        }
+      } else {
+        if(bugs[i].last_change_time) {
+          bugCell.textContent = bugs[i].last_change_time.split("T")[0];
+        }
+      }
+      bugCell.setAttribute("style", "background: " + color(i) + ";");
+      bugRow.appendChild(bugCell);
+    }
+    bugRow.addEventListener("click", function(evt) {
+      var tgt = evt.target;
+      while(tgt.tagName != "TR") {
+        tgt = tgt.parentNode;
+      }
+      tgt = tgt.firstChild.textContent;
+      window.open("https://bugzilla.mozilla.org/show_bug.cgi?id=" + tgt);
+    }, false);
+
+    tbody.appendChild(bugRow);
+    total = total + 1;
+  }
+
+  document.getElementById("GitbotCount")
+          .getElementsByTagName("span")[0].textContent = total;
+
+  document.getElementById("OpenGitbot").removeAttribute("notloaded");
+}
+
 // This is the incoming list of bugs with 'needinfo' set
 function parseNeedInfoList(bugs) {
   var color = d3.scale.category20();
@@ -315,7 +370,9 @@ function parseNeedInfoList(bugs) {
         if(bugs[i].flags) {
           for(j in bugs[i].flags) {
             if(bugs[i].flags[j].name == "needinfo") {
-              bugCell.textContent = bugs[i].flags[j].setter.name + "?" + bugs[i].flags[j].requestee.name;
+              var setter = bugs[i].flags[j].setter.name;
+              var requestee = bugs[i].flags[j].requestee ? bugs[i].flags[j].requestee.name : "";
+              bugCell.textContent = setter + "?" + requestee;
               needinfo = needinfo + 1;
             }
           }

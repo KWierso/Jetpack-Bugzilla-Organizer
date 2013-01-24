@@ -4,6 +4,7 @@ var auth = {"id":"", "cookie":""}
 
 document.getElementById("openAllTriage").addEventListener("click", openAllTriage, false);
 document.getElementById("openAllNeedInfo").addEventListener("click", openAllNeedInfo, false);
+document.getElementById("openAllGitbot").addEventListener("click", openAllGitbot, false);
 
 // Change this to use a different version of the REST API
 // Latest official
@@ -56,6 +57,7 @@ function waitForAddon() {
   getStatusBreakdown();
   getPriorityBreakdown();
   getTriageList();
+  getGitbotList();
   getNeedInfoList();
   getOldList();
   getAttachments();

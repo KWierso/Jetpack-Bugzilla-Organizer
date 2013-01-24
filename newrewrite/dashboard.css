@@ -1,6 +1,7 @@
 body[triage=true] > #assigneeCounts,
 body[triage=true] > #priority,
 body[triage=true] > #oldBugs,
+body[triage=true] > #OpenGitbot,
 body[triage=true] > #attachments,
 body[triage=true] > #breakdown {
   display:none;
@@ -10,6 +11,7 @@ body[assignee=true] > #triageBreakdown,
 body[assignee=true] > #needInfoBreakdown,
 body[assignee=true] > #priority,
 body[assignee=true] > #oldBugs,
+body[assignee=true] > #OpenGitbot,
 body[assignee=true] > #attachments,
 body[assignee=true] > #breakdown {
   display:none;
@@ -19,6 +21,7 @@ body[priority=true] > #triageBreakdown,
 body[priority=true] > #needInfoBreakdown,
 body[priority=true] > #assigneeCounts,
 body[priority=true] > #oldBugs,
+body[priority=true] > #OpenGitbot,
 body[priority=true] > #attachments,
 body[priority=true] > #breakdown {
   display:none;
@@ -28,6 +31,7 @@ body[status=true] > #triageBreakdown,
 body[status=true] > #needInfoBreakdown,
 body[status=true] > #assigneeCounts,
 body[status=true] > #oldBugs,
+body[status=true] > #OpenGitbot,
 body[status=true] > #attachments,
 body[status=true] > #priority {
   display:none;
@@ -37,6 +41,7 @@ body[old=true] > #triageBreakdown,
 body[old=true] > #needInfoBreakdown,
 body[old=true] > #assigneeCounts,
 body[old=true] > #breakdown,
+body[old=true] > #OpenGitbot,
 body[old=true] > #attachments,
 body[old=true] > #priority {
   display:none;
@@ -46,6 +51,7 @@ body[attachments=true] > #triageBreakdown,
 body[attachments=true] > #needInfoBreakdown,
 body[attachments=true] > #assigneeCounts,
 body[attachments=true] > #breakdown,
+body[attachments=true] > #OpenGitbot,
 body[attachments=true] > #oldBugs,
 body[attachments=true] > #priority {
   display:none;
@@ -63,6 +69,7 @@ body > div[notloaded] > img {
 
 body > div[notloaded] > #oldTotalCount,
 body > div[notloaded] > #triageExtras ,
+body > div[notloaded] > #GitbotExtras ,
 body > div[notloaded] > #needInfoExtras {
   display:none;
 }
@@ -123,7 +130,7 @@ th {
   border:1px dashed!important;
 }
 
-#priority, #breakdown, #triageBreakdown, #needInfoBreakdown, #assigneeCounts, #oldBugs, #attachments {
+#priority, #breakdown, #triageBreakdown, #needInfoBreakdown, #assigneeCounts, #oldBugs, #attachments, #OpenGitbot {
     min-width:790px;
     float: left;
     border:1px solid black;
@@ -181,14 +188,14 @@ tr:hover, tr:hover td {
   background: lightgrey !important;
 }
 
-#triageBreakdown table, #needInfoBreakdown table, #oldBugs table, #attachmentTable {
+#triageBreakdown table, #needInfoBreakdown table, #oldBugs table, #attachmentTable, #OpenGitbot table {
   table-layout: fixed;
   width:790px;
   word-wrap:break-word;
   float:none;
 }
 
-#triageBreakdown td:nth-child(3), #needInfoBreakdown td:nth-child(3), #oldBugs td:nth-child(3) {
+#triageBreakdown td:nth-child(3), #needInfoBreakdown td:nth-child(3), #oldBugs td:nth-child(3), #OpenGitbot td:nth-child(3) {
   text-overflow:ellipsis!important;
   width:600px;
   white-space:nowrap;
@@ -198,7 +205,9 @@ tr:hover, tr:hover td {
 #triageTable td:nth-child(1), #triageTable th:nth-child(1),
 #triageTable td:nth-child(2), #triageTable th:nth-child(2),
 #needInfoTable td:nth-child(1), #needInfoTable th:nth-child(1),
-#needInfoTable td:nth-child(2), #needInfoTable th:nth-child(2){
+#needInfoTable td:nth-child(2), #needInfoTable th:nth-child(2)
+#OpenGitbotTable td:nth-child(1), #OpenGitbotTable th:nth-child(1),
+#OpenGitbotTable td:nth-child(2), #OpenGitbotTable th:nth-child(2){
   width: 15%;
 }
 
@@ -210,7 +219,7 @@ tr:hover, tr:hover td {
   width: 25%;
 }
 
-#triageExtras, #needInfoExtras, #oldTotalCount {
+#triageExtras, #needInfoExtras, #oldTotalCount, #GitbotExtras {
   text-align: right!important;
   float:right;
   padding-right:10px;
@@ -293,7 +302,7 @@ div[showing=false] :not(.toggle):not(h3){
   #assigneeTable, #attachmentTable, #triageTable, #oldBugTable {
    width:445px!important;
   }
-  #assigneeCounts, #triageBreakdown, #needInfoBreakdown, #oldBugs, #priority, #breakdown, #attachments {
+  #assigneeCounts, #triageBreakdown, #needInfoBreakdown, #OpenGitbot, #oldBugs, #priority, #breakdown, #attachments {
     width:449px!important;
     min-width:449px!important;
     max-width:449px!important;
@@ -328,6 +337,7 @@ div[showing=false] :not(.toggle):not(h3){
   #priority svg, #breakdown svg, 
   #triageTable td:nth-child(2), #triageTable th:nth-child(2),
   #needInfoTable td:nth-child(2), #needInfoTable th:nth-child(2),
+  #OpenGitbotTable td:nth-child(2), #OpenGitbotTable th:nth-child(2),
   #attachmentTable td:nth-child(2), #attachmentTable th:nth-child(2),
   #oldBugTable td:nth-child(2), #oldBugTable th:nth-child(2) {
     display:none!important;
@@ -348,6 +358,7 @@ div[showing=false] :not(.toggle):not(h3){
   }
   
   #triageTable td:nth-child(1), #triageTable th:nth-child(1),
+  #OpenGitbotTable td:nth-child(1), #OpenGitbotTable th:nth-child(1),
   #needInfoTable td:nth-child(1), #needInfoTable th:nth-child(1),
   #oldBugTable td:nth-child(1), #oldBugTable th:nth-child(1) {
     width: 60px!important;
