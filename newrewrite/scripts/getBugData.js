@@ -44,7 +44,9 @@ function getAttachments() {
                       flagRequestee: ""
                     }
                     if(item.flagStatus == "?") {
-                      item.flagRequestee = bugs[i].attachments[j].flags[k].requestee.name;
+                      try {
+                        item.flagRequestee = bugs[i].attachments[j].flags[k].requestee.name;
+                      } catch(e) { /* Maybe no one was requested? */ }
                     }
                     
                     switch(item.flagStatus) {
