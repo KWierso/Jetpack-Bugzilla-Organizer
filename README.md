@@ -11,3 +11,4 @@ It shows how many patches are attached to bugs in the milestone, along with coun
 
 It then shows a table of all of the bugs returned from the request, with a few options to filter the results.
 Each column in the table (except patches) is sortable in both directions.
+k
